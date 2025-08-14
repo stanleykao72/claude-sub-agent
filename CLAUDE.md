@@ -35,6 +35,40 @@ Use spec-architect: Design system architecture for microservices
 Use spec-developer: Implement user authentication based on specifications
 ```
 
+### Story Management and Progress Tracking
+
+```bash
+# Create user stories with BMad-Method integration
+/create-story requirements.md --epic="User-System" --priority=High
+
+# Track real-time progress with checkbox completion
+/track-progress Epic-1-Story-2.1 --format=dashboard --detail=high
+
+# Story lifecycle management
+Use spec-story-manager: Create story for user authentication system
+Use spec-progress-tracker: Generate comprehensive progress report for active stories
+
+# Task planning with checkbox hierarchy
+Use spec-planner: Break down story into tasks with 3-level checkbox tracking
+```
+
+### Document Sharding and Organization
+
+```bash
+# Automatic document sharding (triggered automatically for documents >500 lines)
+/agent-workflow "Create comprehensive ERP system" 
+# Large requirements and architecture documents are automatically sharded
+
+# Manual document sharding
+/shard-document architecture.md --threshold=400 --output=docs/sharded/
+
+# Batch document sharding
+/shard-document docs/ --pattern="*.md" --threshold=300
+
+# Direct agent usage
+Use doc-sharding-agent: Shard the large requirements document for better AI processing
+```
+
 ### Quality Gates and Testing
 
 ```bash
@@ -71,13 +105,15 @@ cp commands/agent-workflow.md .claude/commands/
 The system follows a three-phase approach with quality gates:
 
 1. **Planning Phase (20-25% of project time)**
-   - spec-analyst: Requirements analysis and user stories
+   - spec-analyst: Requirements analysis and initial user stories
+   - spec-story-manager: Comprehensive story creation with BMad-Method principles
    - spec-architect: System architecture and API design
-   - spec-planner: Task breakdown and estimation
+   - spec-planner: Task breakdown with 3-level checkbox tracking
    - Quality Gate 1: 95% compliance threshold
 
 2. **Development Phase (60-65% of project time)**
-   - spec-developer: Code implementation following specifications
+   - spec-developer: Code implementation following story specifications
+   - spec-progress-tracker: Real-time progress monitoring and blocker identification
    - spec-tester: Comprehensive test suite generation
    - Quality Gate 2: 80% compliance threshold
 
@@ -92,9 +128,11 @@ The system follows a three-phase approach with quality gates:
 
 - spec-orchestrator: Workflow coordination and quality gate management
 - spec-analyst: Requirements analysis specialist
+- spec-story-manager: User story lifecycle management with BMad-Method integration
 - spec-architect: System architecture designer  
-- spec-planner: Task breakdown and planning
+- spec-planner: Task breakdown and checkbox tracking specialist
 - spec-developer: Implementation specialist
+- spec-progress-tracker: Real-time progress monitoring and analytics
 - spec-tester: Testing expert
 - spec-reviewer: Code review specialist
 - spec-validator: Final validation expert
@@ -107,6 +145,7 @@ The system follows a three-phase approach with quality gates:
 
 **Utility Agents**
 
+- doc-sharding-agent: Document fragmentation and organization specialist
 - refactor-agent: Code quality and refactoring specialist
 
 ### Quality Framework
@@ -163,10 +202,10 @@ The `/agent-workflow` command provides one-command execution of the entire devel
 
 ### Sub-Agent Chain Process
 
-The system uses Claude Code's sub-agent syntax for coordinated execution:
+The system uses Claude Code's sub-agent syntax for coordinated execution with BMad-Method story integration:
 
 ```
-First use the spec-analyst sub agent → then spec-architect sub agent → then spec-developer sub agent → then spec-validator sub agent → quality gate decision → if score ≥95% continue to spec-tester, otherwise loop back with feedback
+First use the spec-analyst sub agent → then spec-story-manager sub agent → then spec-architect sub agent → then spec-planner sub agent → then spec-developer sub agent → then spec-progress-tracker sub agent → then spec-validator sub agent → quality gate decision → if score ≥95% continue to spec-tester, otherwise loop back with feedback based on progress analysis
 ```
 
 ### Quality Gate Mechanism

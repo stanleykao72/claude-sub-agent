@@ -1,0 +1,111 @@
+{
+  "environments": {
+    "staging": {
+      "ssh_host": "22611896@odoo-esmith-v18-stage30-22611896.dev.odoo.com",
+      "ssh_key_path": "~/.ssh/odoo_sh_key",
+      "description": "Staging environment for testing",
+      "active": true,
+      "deployment_timeout": 600,
+      "health_check_interval": 30,
+      "max_retry_attempts": 10
+    },
+    "production": {
+      "ssh_host": "22611896@odoo-esmith-v18-prod-22611896.odoo.com", 
+      "ssh_key_path": "~/.ssh/odoo_sh_key",
+      "description": "Production environment",
+      "active": false,
+      "deployment_timeout": 900,
+      "health_check_interval": 45,
+      "max_retry_attempts": 8
+    },
+    "development": {
+      "ssh_host": "22611896@odoo-esmith-v18-dev-22611896.dev.odoo.com",
+      "ssh_key_path": "~/.ssh/odoo_sh_key",
+      "description": "Development environment for experiments",
+      "active": false,
+      "deployment_timeout": 450,
+      "health_check_interval": 20,
+      "max_retry_attempts": 12
+    }
+  },
+  "default_environment": "staging",
+  "connection_timeout": 30,
+  "retry_attempts": 3,
+  "deployment_monitoring": {
+    "strategy": "status_polling",
+    "github_integration": {
+      "enabled": true,
+      "api_token_env": "GITHUB_TOKEN",
+      "repository": "owner/repo-name",
+      "branch_mapping": {
+        "main": "production",
+        "staging": "staging", 
+        "develop": "development"
+      }
+    },
+    "odoo_sh_polling": {
+      "enabled": true,
+      "check_interval": 30,
+      "max_attempts": 20,
+      "deployment_indicators": [
+        "ssh_connectivity",
+        "service_responsiveness", 
+        "recent_restart",
+        "database_accessibility",
+        "log_activity"
+      ],
+      "completion_threshold": 80
+    },
+    "time_based_monitoring": {
+      "enabled": false,
+      "initial_wait": 90,
+      "health_check_interval": 60,
+      "stability_check_delay": 15
+    }
+  },
+  "retry_logic": {
+    "max_attempts": 5,
+    "backoff_strategy": "exponential",
+    "base_delay": 60,
+    "max_delay": 300,
+    "retry_scenarios": [
+      "ssh_timeout",
+      "test_failure", 
+      "service_unavailable"
+    ]
+  },
+  "test_settings": {
+    "default_modules": [
+      "ai_chat",
+      "ai_config", 
+      "ai_config_gemini",
+      "ai_requisition_assistant"
+    ],
+    "quick_test_timeout": 300,
+    "comprehensive_test_timeout": 1800,
+    "health_check_interval": 300,
+    "test_retry_attempts": 3,
+    "test_retry_delay": 30
+  },
+  "logging": {
+    "level": "INFO",
+    "save_logs": true,
+    "log_directory": "logs/odoo-sh",
+    "deployment_logs": true,
+    "test_logs": true,
+    "progress_tracking": true
+  },
+  "notifications": {
+    "deployment_completion": {
+      "enabled": false,
+      "webhook_url": "",
+      "slack_channel": "",
+      "email_recipients": []
+    },
+    "test_failures": {
+      "enabled": true,
+      "alert_threshold": 50,
+      "notification_methods": ["console", "file"]
+    }
+  }
+}

@@ -1,5 +1,7 @@
 # Claude Sub-Agent Spec Workflow System
 
+> **Language / 語言**: [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zht.md)
+
 A comprehensive AI-driven development workflow system built on Claude Code's Sub-Agents feature. This system transforms project ideas into production-ready code through specialized AI agents working in coordinated phases.
 
 ## Table of Contents
@@ -24,6 +26,9 @@ The Spec Workflow System leverages Claude Code's Sub-Agents capability to create
 ### Key Features
 
 - **Automated Workflow**: Complete development pipeline from idea to production code
+- **Story-Driven Development**: BMad-Method integration with user story lifecycle management
+- **Progress Tracking**: Real-time task completion tracking with 3-level checkbox hierarchy
+- **Document Sharding**: Automatic fragmentation of large documents for better AI processing
 - **Specialized Expertise**: Each agent focuses on their domain of expertise
 - **Quality Gates**: Automated checkpoints ensure quality standards
 - **Flexible Integration**: Works with existing specialized agents
@@ -32,44 +37,71 @@ The Spec Workflow System leverages Claude Code's Sub-Agents capability to create
 ### Benefits
 
 - 10x faster development from concept to code
+- Story-driven development with clear acceptance criteria and progress tracking
+- Real-time velocity analytics and blocker identification
+- Automatic document fragmentation for optimal AI processing and collaboration
 - Consistent quality through automated validation
 - Comprehensive documentation generated automatically
 - Reduced errors through systematic processes
-- Better collaboration through clear workflows
+- Better collaboration through clear workflows and checkbox progress visibility
 
 ## System Architecture
 
+### Multi-Agent Odoo 18 Development Pipeline
+
 ```mermaid
 graph TD
-    A[Project Idea] --> B[spec-orchestrator]
-    B --> C[Planning Phase]
-    C --> D[spec-analyst<br/>Requirements]
-    D --> E[spec-architect<br/>System Design]
-    E --> F[spec-planner<br/>Task Breakdown]
+    A[🚀 Odoo Module Idea] --> B[🎭 spec-orchestrator]
+    B --> C[📋 Planning Phase]
+    C --> D[🎯 spec-analyst<br/>Odoo Requirements]
+    D --> E[🏗️ spec-architect<br/>Module Architecture]
+    E --> F[📝 spec-planner<br/>Task Breakdown]
     
-    F --> G{Quality Gate 1}
-    G -->|Pass| H[Development Phase]
-    G -->|Fail| D
+    F --> G{🥇 Quality Gate 1<br/>Planning ≥95%}
+    G -->|✅ Pass| H[💻 Development Phase]
+    G -->|❌ Fail| D
     
-    H --> I[spec-developer<br/>Implementation]
-    I --> J[spec-tester<br/>Testing]
+    H --> I[💻 spec-developer<br/>Odoo Implementation]
+    H --> I2[🎨 odoo18-backend-architect<br/>Backend Models]
+    H --> I3[📱 odoo18-view-generator<br/>XML Views]
+    H --> I4[⚡ odoo18-frontend-architect<br/>OWL Components]
+    I --> J[🧪 spec-tester<br/>Testing Suite]
+    I2 --> J
+    I3 --> J
+    I4 --> J
     
-    J --> K{Quality Gate 2}
-    K -->|Pass| L[Validation Phase]
-    K -->|Fail| I
+    J --> K{🥈 Quality Gate 2<br/>Development ≥80%}
+    K -->|✅ Pass| L[✅ Validation Phase]
+    K -->|❌ Fail| I
     
-    L --> M[spec-reviewer<br/>Code Review]
-    M --> N[spec-validator<br/>Final Check]
+    L --> M[📋 spec-reviewer<br/>Code Review]
+    M --> N[✅ spec-validator<br/>Production Check]
     
-    N --> O{Quality Gate 3}
-    O -->|Pass| P[Production Ready]
-    O -->|Fail| Q[Feedback Loop]
+    N --> O{🥉 Quality Gate 3<br/>Production Ready ≥85%}
+    O -->|✅ Pass| P[🎉 Production Ready<br/>Odoo Module]
+    O -->|❌ Fail| Q[🔄 Intelligent Feedback]
     
-    style B fill:#1a73e8,color:#fff
-    style G fill:#f9ab00,color:#fff
-    style K fill:#f9ab00,color:#fff
-    style O fill:#f9ab00,color:#fff
-    style P fill:#34a853,color:#fff
+    Q --> R{📊 Issue Analysis}
+    R -->|Planning Issues| D
+    R -->|Development Issues| I
+    R -->|Validation Issues| M
+    
+    %% Styling
+    classDef orchestrator fill:#1a73e8,color:#fff,stroke:#0d47a1,stroke-width:3px
+    classDef phase fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px,color:#000
+    classDef process fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+    classDef odoo fill:#7b1fa2,color:#fff,stroke:#4a148c,stroke-width:2px
+    classDef gate fill:#f9ab00,color:#fff,stroke:#e65100,stroke-width:3px
+    classDef success fill:#34a853,color:#fff,stroke:#1b5e20,stroke-width:3px
+    classDef feedback fill:#ff9800,color:#fff,stroke:#ef6c00,stroke-width:2px
+    
+    class B orchestrator
+    class C,H,L phase
+    class D,E,F,I,J,M,N process
+    class I2,I3,I4 odoo
+    class G,K,O gate
+    class P success
+    class Q,R feedback
 ```
 
 ## Installation
@@ -93,17 +125,26 @@ graph TD
    # Individual agent files are available in the agents/ directory
    ```
 
-2. **Copy agents and slash command to your project's Claude Code directory**
+2. **Copy agents and slash commands to your project's Claude Code directory**
 
    ```bash
    # Create .claude directory structure in your project
-   mkdir -p .claude/agents .claude/commands
+   mkdir -p ../.claude/agents ../.claude/commands ../.claude/template ../.claude/config ../.claude/hooks
    
    # Copy all agents from categorized directories
-   cp -r agents/*/*.md .claude/agents/
+   cp -r agents/*/*.md ../.claude/agents/
    
-   # Copy slash command
-   cp commands/agent-workflow.md .claude/commands/
+   # Copy all slash commands
+   cp commands/*.md ../.claude/commands/
+   
+   # Copy templates directory
+   cp -r templates/*.md ../.claude/template/
+   
+   # Copy hooks (for event-driven automation)
+   cp -r hooks/*.sh ../.claude/hooks/
+   
+   # Copy configuration examples (optional - for Odoo.sh integration)
+   cp config/odoo-sh.example.json ../.claude/config/
    ```
 
 3. **Add RULES to CLAUDE.md**
@@ -111,18 +152,94 @@ graph TD
    ```md
    ## Project Documentation Conventions (Important)
 
-   **Documentation Files:** All new documentation or task files must be saved under the `docs/` folder in this repository.For example:
+   **Documentation Files:** All new documentation or task files must be saved under the `docs/` folder organized by module and version. For example:
 
-   - **Tasks & TODOs**: Save in `docs/{YYYY_MM_DD}/tasks/` (e.g., `docs/t2025_08_08/asks/ReleaseTodo.md` for a release checklist).
-   - **Requirements/Specs**: Save in `docs/{YYYY_MM_DD}/specs/` (e.g., `docs/2025_08_08/specs/AuthModuleRequirements.md`).
-   - **Design Docs**: Save in `docs/{YYYY_MM_DD}/design/` (e.g., `docs/2025_08_08/design/ArchitectureOverview.md`).
-   - **Code Files:** Follow the project structure (place new code in the appropriate src/module folder as discussed).
-   - **Tests:** Put new test files under the `tests/` directory, mirroring the code structure.
+   - **Module Requirements**: Save in `docs/{module_name}/v{version}/requirements.md` (e.g., `docs/ai_chat/v1.0.0/requirements.md`)
+   - **Architecture Specs**: Save in `docs/{module_name}/v{version}/architecture.md` (e.g., `docs/ai_chat/v1.0.0/architecture.md`)
+   - **API Documentation**: Save in `docs/{module_name}/v{version}/api-spec.md`
+   - **User Stories**: Save in `docs/{module_name}/v{version}/user-stories.md`
+   - **Migration Guides**: Save in `docs/{module_name}/v{version}/migration-guide.md`
+   - **Integration Docs**: Save in `docs/integration/` for cross-module documentation
+   - **Global Standards**: Save in `docs/global/` for project-wide standards
 
-   > **Important:** When creating a new file, ensure the directory exists or create it. Never default to the root directory for these files.
+   **Document Sharding:** For large documents (>500 lines), use automatic sharding:
+   - **Sharded Documents**: Save in `docs/{module_name}/v{version}/{document_name}/` directory
+   - **Index File**: Maintain `docs/{module_name}/v{version}/{document_name}.md` as entry point
+   - **Section Files**: Individual sections as `01-introduction.md`, `02-architecture.md`, etc.
+   - **Navigation**: Include cross-references between sections for easy navigation
+
+   **Story Management:** For BMad-Method story-driven development:
+   - **Stories**: Save in `stories/{epic_name}/` directory 
+   - **Story Files**: Name as `epic-{N}-story-{N.N}-{title}.md`
+   - **Progress Tracking**: Use 3-level checkbox hierarchy (Task → Subtask → Action Items)
+   - **Templates**: Use `templates/story-template.md` for consistency
+
+   **Framework-Specific Files:** Follow framework conventions:
+   - **Odoo Modules**: Place in `user/{module_name}/` with standard structure
+   - **React/Next.js**: Place in `src/` with component-based organization
+   - **Backend Services**: Place in appropriate service directories
+
+   > **Important:** Always follow naming conventions and ensure proper internationalization. Use document sharding for optimal AI processing of large files.
    ```
 
-4. **Verify installation**
+4. **Configure Claude Code Hooks (Recommended)**
+
+   Claude Code Hooks provide event-driven automation for odoo.sh deployment monitoring:
+
+   ```bash
+   # Make hooks executable
+   chmod +x .claude/hooks/*.sh
+   
+   # Hooks will automatically activate when:
+   # 1. post-git-push-hook.sh - Triggered after git push operations
+   # 2. deployment-ready-hook.sh - Triggered when deployment monitoring detects readiness
+   ```
+
+   **Hook Benefits:**
+   - **Event-driven**: Automatically triggered by git operations
+   - **Background monitoring**: Non-blocking deployment progress tracking
+   - **Smart testing**: Automatic test execution when deployment is ready
+   - **Comprehensive reporting**: Detailed deployment and test reports
+
+5. **Configure Odoo.sh Integration (Optional)**
+
+   For Odoo development projects, set up odoo.sh CI/CD integration:
+
+   ```bash
+   # Copy the example configuration
+   cp .claude/config/odoo-sh.example.json .claude/config/odoo-sh.json
+   
+   # Edit the configuration with your odoo.sh details
+   # Update SSH hosts, environments, and module settings
+   ```
+
+   **Example configuration:**
+   ```json
+   {
+     "environments": {
+       "staging": {
+         "ssh_host": "your-user@your-project-stage.dev.odoo.com",
+         "ssh_key_path": "~/.ssh/odoo_sh_key",
+         "active": true
+       }
+     },
+     "default_environment": "staging",
+     "test_settings": {
+       "default_modules": ["your_module", "your_other_module"]
+     }
+   }
+   ```
+
+   **Test the configuration:**
+   ```bash
+   # Test SSH connectivity
+   ssh your-user@your-project-stage.dev.odoo.com "echo 'Connection successful'"
+   
+   # Test odoo.sh commands
+   ssh your-user@your-project-stage.dev.odoo.com "odoo-bin --version"
+   ```
+
+6. **Verify installation**
 
    **Repository Structure:**
 
@@ -135,20 +252,40 @@ graph TD
    │   │   ├── spec-developer.md
    │   │   ├── spec-orchestrator.md
    │   │   ├── spec-planner.md
+   │   │   ├── spec-progress-tracker.md
    │   │   ├── spec-reviewer.md
+   │   │   ├── spec-story-manager.md
    │   │   ├── spec-tester.md
    │   │   └── spec-validator.md
    │   ├── backend/             # Backend specialists
-   │   │   └── senior-backend-architect.md
+   │   │   ├── senior-backend-architect.md
+   │   │   ├── odoo18-backend-architect.md
+   │   │   └── odoo-sh-tester.md
    │   ├── frontend/            # Frontend specialists
-   │   │   └── senior-frontend-architect.md
+   │   │   ├── senior-frontend-architect.md
+   │   │   ├── odoo18-view-generator.md
+   │   │   └── odoo18-frontend-architect.md
    │   ├── ui-ux/              # Design specialists
    │   │   └── ui-ux-master.md
    │   └── utility/             # Utility agents
+   │       ├── doc-sharding-agent.md
+   │       ├── git-push-deploy.md
    │       └── refactor-agent.md
-   └── commands/
-       └── agent-workflow.md    # Slash command
-   ├── CLAUDE.md
+   ├── commands/               # Slash commands
+   │   ├── agent-workflow.md
+   │   ├── create-story.md
+   │   ├── deploy-odoo.md
+   │   ├── git-push-deploy.md
+   │   ├── shard-document.md
+   │   └── track-progress.md
+   ├── config/                 # Configuration examples
+   │   └── odoo-sh.example.json
+   ├── hooks/                  # Claude Code Hooks
+   │   ├── post-git-push-hook.sh
+   │   └── deployment-ready-hook.sh
+   ├── templates/              # Story and document templates
+   │   └── story-template.md
+   └── CLAUDE.md
    ```
 
    **Your project structure after installation:**
@@ -157,19 +294,39 @@ graph TD
    your-project/
    ├── .claude/
    │   ├── commands/
-   │   │   └── agent-workflow.md   # Slash command
+   │   │   ├── agent-workflow.md   # Main workflow slash command
+   │   │   ├── create-story.md     # Story creation command
+   │   │   ├── deploy-odoo.md      # Odoo.sh deployment command
+   │   │   ├── git-push-deploy.md  # Git push with deployment monitoring
+   │   │   ├── shard-document.md   # Document sharding command
+   │   │   └── track-progress.md   # Progress tracking command
+   │   ├── config/
+   │   │   └── odoo-sh.json        # Odoo.sh configuration (optional)
+   │   ├── hooks/
+   │   │   ├── post-git-push-hook.sh     # Auto deployment monitoring hook
+   │   │   └── deployment-ready-hook.sh  # Auto testing trigger hook
+   │   ├── templates/
+   │   │   └── story-template.md   # User story template
    │   └── agents/
    │       ├── spec-analyst.md
    │       ├── spec-architect.md
    │       ├── spec-developer.md
    │       ├── spec-orchestrator.md
    │       ├── spec-planner.md
+   │       ├── spec-progress-tracker.md
    │       ├── spec-reviewer.md
+   │       ├── spec-story-manager.md
    │       ├── spec-tester.md
    │       ├── spec-validator.md
    │       ├── senior-backend-architect.md
+   │       ├── odoo18-backend-architect.md
+   │       ├── odoo-sh-tester.md
    │       ├── senior-frontend-architect.md
+   │       ├── odoo18-view-generator.md
+   │       ├── odoo18-frontend-architect.md
    │       ├── ui-ux-master.md
+   │       ├── doc-sharding-agent.md
+   │       ├── git-push-deploy.md
    │       └── refactor-agent.md
    ├── CLAUDE.md
    └── ... (your project files)
@@ -184,12 +341,14 @@ graph TD
 Ask Claude: "Use the spec-orchestrator agent to create a todo list web application"
 
 # The orchestrator will automatically:
-# 1. Analyze requirements
-# 2. Design architecture
-# 3. Plan tasks
-# 4. Implement code
-# 5. Write tests
-# 6. Review and validate
+# 1. Analyze requirements and create initial user stories
+# 2. Create comprehensive user stories with BMad-Method principles
+# 3. Design architecture
+# 4. Plan tasks with 3-level checkbox tracking
+# 5. Implement code with real-time progress monitoring
+# 6. Track progress and identify blockers
+# 7. Write tests
+# 8. Review and validate
 ```
 
 ### Simple Example
@@ -257,7 +416,17 @@ For the quickest way to start a complete workflow, use our custom slash command:
 - `--output-dir=[path]`: Specify output directory
 - `--language=[zh|en]`: Documentation language
 
-**📖 For complete slash command documentation, see [commands/agent-workflow.md](./commands/agent-workflow.md)**
+**📖 For complete slash command documentation, see:**
+- [agent-workflow.md](./commands/agent-workflow.md) - Main workflow orchestration
+- [create-story.md](./commands/create-story.md) - Story creation and management
+- [deploy-odoo.md](./commands/deploy-odoo.md) - Odoo.sh deployment and testing
+- [git-push-deploy.md](./commands/git-push-deploy.md) - Git push with intelligent deployment monitoring
+- [track-progress.md](./commands/track-progress.md) - Real-time progress tracking
+- [shard-document.md](./commands/shard-document.md) - Document sharding and organization
+
+**🎣 Hook-Based Automation:**
+- [post-git-push-hook.sh](./hooks/post-git-push-hook.sh) - Automatic deployment monitoring after git push
+- [deployment-ready-hook.sh](./hooks/deployment-ready-hook.sh) - Automatic testing when deployment is ready
 
 ## How It Works
 
@@ -276,16 +445,18 @@ Our system leverages these features by creating specialized agents for each deve
 
 #### Planning Phase
 
-1. **spec-analyst**: Analyzes requirements and creates user stories
-2. **spec-architect**: Designs system architecture
-3. **spec-planner**: Breaks down work into tasks
-4. **Quality Gate 1**: Validates planning completeness
+1. **spec-analyst**: Analyzes requirements and creates initial user stories
+2. **spec-story-manager**: Creates comprehensive user stories with BMad-Method lifecycle management
+3. **spec-architect**: Designs system architecture
+4. **spec-planner**: Breaks down work into tasks with 3-level checkbox tracking
+5. **Quality Gate 1**: Validates planning completeness
 
 #### Development Phase
 
-1. **spec-developer**: Implements code based on tasks
-2. **spec-tester**: Writes comprehensive tests
-3. **Quality Gate 2**: Validates code quality
+1. **spec-developer**: Implements code based on story specifications
+2. **spec-progress-tracker**: Monitors real-time progress and identifies blockers
+3. **spec-tester**: Writes comprehensive tests
+4. **Quality Gate 2**: Validates code quality
 
 #### Validation Phase
 
@@ -319,10 +490,12 @@ Our agents are organized into specialized categories for better organization and
 | Agent | Purpose | Inputs | Outputs |
 |-------|---------|--------|---------|
 | spec-orchestrator | Workflow coordination | Project description | Status reports, routing |
-| spec-analyst | Requirements analysis | User description | requirements.md, user-stories.md |
-| spec-architect | System design | Requirements | architecture.md, api-spec.md |
-| spec-planner | Task planning | Architecture | tasks.md, test-plan.md |
-| spec-developer | Implementation | Tasks | Source code, unit tests |
+| spec-analyst | Requirements analysis | User description | requirements.md, initial user-stories.md |
+| spec-story-manager | Story lifecycle management | Requirements | Comprehensive user stories, acceptance criteria |
+| spec-architect | System design | Requirements, Stories | architecture.md, api-spec.md |
+| spec-planner | Task planning with checkboxes | Architecture, Stories | tasks.md with 3-level checkboxes, test-plan.md |
+| spec-developer | Implementation | Tasks, Stories | Source code, task completion updates |
+| spec-progress-tracker | Progress monitoring | Task status | Progress reports, velocity metrics, blocker alerts |
 | spec-tester | Testing | Code | Test suites, coverage reports |
 | spec-reviewer | Code review | Code | Review report, improvements |
 | spec-validator | Final validation | All artifacts | Validation report, quality score |
@@ -334,12 +507,15 @@ Our agents are organized into specialized categories for better organization and
 | Agent | Domain | Integration Point |
 |-------|--------|-----------|
 | senior-backend-architect | Backend Systems & Architecture | Architecture/Development phase |
+| odoo18-backend-architect | Odoo 18 Backend Development | Architecture/Development phase |
 
 #### Frontend Specialists (frontend/)
 
 | Agent | Domain | Integration Point |
 |-------|--------|-----------|
 | senior-frontend-architect | Frontend Systems & Architecture | Development phase |
+| odoo18-view-generator | Odoo 18 XML View Generation | Development phase |
+| odoo18-frontend-architect | Odoo 18 OWL Frontend Development | Development phase |
 
 #### UI/UX Specialists (ui-ux/)
 
@@ -351,6 +527,8 @@ Our agents are organized into specialized categories for better organization and
 
 | Agent | Domain | Integration Point |
 |-------|--------|-----------|
+| doc-sharding-agent | Document Fragmentation & Management | Post-analysis, Post-architecture, Final organization |
+| git-push-deploy | Git Push with Deployment Monitoring | Post-development, CI/CD integration |
 | refactor-agent | Code Quality & Refactoring | Any phase |
 
 ## Usage Examples
@@ -390,6 +568,92 @@ Load requirements from ./docs/requirements.md and continue workflow
 # Run only validation on existing code
 Use spec-orchestrator for validation phase only:
 Validate the project in ./my-app/
+```
+
+### Example 5: Odoo.sh CI/CD Integration
+
+```bash
+# Deploy Odoo modules to staging environment
+/deploy-odoo staging --modules=ai_chat,ai_config --test-suite=comprehensive
+
+# Quick deployment with minimal testing
+/deploy-odoo --test-suite=quick
+
+# Health check only (no deployment)
+/deploy-odoo --test-suite=health-only
+
+# Use odoo-sh-tester directly
+Use odoo-sh-tester: Run comprehensive test suite for AI modules
+Use odoo-sh-tester: Check odoo.sh environment health and recent logs
+Use odoo-sh-tester: Open interactive Odoo shell for debugging
+```
+
+### Example 6: Document Sharding
+
+```bash
+# Automatic document sharding during workflow
+# Large documents (>500 lines) are automatically sharded during the workflow
+
+# Manual document sharding
+/shard-document requirements.md --threshold=400 --output=docs/sharded/
+
+# Shard multiple documents with batch processing
+/shard-document docs/ --pattern="*.md" --threshold=300 --dry-run
+
+# Use doc-sharding-agent directly
+Use doc-sharding-agent: Shard the architecture.md document for better AI processing
+```
+
+### Example 7: Git Push with Deployment Monitoring
+
+```bash
+# Intelligent Git push with automated odoo.sh deployment monitoring
+/git-push-deploy --message="Implement AI chat improvements" --test-suite=comprehensive
+
+# Quick deployment with minimal testing
+/git-push-deploy --test-suite=quick --timeout=300
+
+# Emergency deployment with health-check only
+/git-push-deploy --message="Hotfix: Critical security update" --test-suite=health-only
+
+# Multi-branch deployment
+/git-push-deploy --branch="staging" --strategy=polling --modules="ai_chat,ai_config"
+
+# Use git-push-deploy agent directly
+Use git-push-deploy: Push current changes and monitor odoo.sh deployment with comprehensive testing
+Use git-push-deploy: Emergency deployment with message "Fix critical bug" and health-check-only testing
+Use git-push-deploy: Push to staging branch with polling strategy and 10-minute timeout
+```
+
+### Example 8: Hook-Based Event-Driven Automation
+
+```bash
+# Hooks automatically activate on git operations:
+
+# 1. Developer pushes code
+git push origin v18-dev25
+
+# 2. post-git-push-hook.sh automatically:
+#    - Detects Odoo-related changes
+#    - Starts background deployment monitoring
+#    - Tracks SSH connectivity and service status
+#    - Creates deployment-ready trigger when complete
+
+# 3. deployment-ready-hook.sh automatically:
+#    - Executes comprehensive test suite
+#    - Generates detailed test reports
+#    - Provides success/failure notifications
+#    - Creates actionable next steps
+
+# Manual hook monitoring:
+tail -f .claude/config/deployment-hooks.log
+
+# Hook status and control:
+# View active monitoring processes
+ps aux | grep deployment-monitor
+
+# Stop deployment monitoring if needed
+kill $(cat .claude/config/deployment-monitor.pid)
 ```
 
 ## Quality Gates
