@@ -23,16 +23,26 @@ Claude Sub-Agent Spec Workflow System - A comprehensive AI-driven development wo
 ### Workflow Execution
 
 ```bash
-# Execute complete development workflow using slash command
-/agent-workflow "Create a todo list web application with user authentication"
+# Execute complete development workflow with Tech Leader coordination
+/agent-workflow "Create an Odoo inventory management module with barcode scanning"
 
-# Start workflow manually with orchestrator
-Use spec-orchestrator: Create an enterprise CRM system with multi-tenancy support
+# Start workflow manually with orchestrator (includes Tech Leader coordination)
+Use spec-orchestrator: Create an enterprise Odoo CRM extension with multi-tenancy support
 
-# Phase-specific execution
-Use spec-analyst: Analyze requirements for an e-commerce platform
-Use spec-architect: Design system architecture for microservices
-Use spec-developer: Implement user authentication based on specifications
+# Phase-specific execution (Tech Leader automatically coordinates specialists)
+Use spec-analyst: Analyze requirements for an Odoo e-commerce integration
+Use spec-architect: Design system architecture for Odoo microservices
+Use spec-developer: Assess complexity and coordinate implementation for user authentication
+
+# Direct specialist usage (outside workflow - for isolated tasks only)
+Use odoo18-backend-architect: Design complex multi-company workflow for existing module
+Use odoo18-frontend-architect: Create advanced dashboard widget for specific requirement
+Use odoo18-view-generator: Generate standard views for new model
+
+# Tech Leader coordination examples
+Use spec-developer: Implement complete Odoo module with intelligent agent delegation
+Use spec-developer: Assess task complexity and coordinate appropriate specialists for [FEATURE]
+Use spec-developer: Integrate specialist outputs for cohesive Odoo module delivery
 ```
 
 ### Story Management and Progress Tracking
@@ -131,7 +141,7 @@ The system follows a three-phase approach with quality gates:
 - spec-story-manager: User story lifecycle management with BMad-Method integration
 - spec-architect: System architecture designer  
 - spec-planner: Task breakdown and checkbox tracking specialist
-- spec-developer: Implementation specialist
+- **spec-developer: Tech Leader and implementation coordinator** (Enhanced Role)
 - spec-progress-tracker: Real-time progress monitoring and analytics
 - spec-tester: Testing expert
 - spec-reviewer: Code review specialist
@@ -142,6 +152,12 @@ The system follows a three-phase approach with quality gates:
 - senior-frontend-architect: React/Vue/Next.js expert
 - senior-backend-architect: Go/TypeScript backend systems
 - ui-ux-master: UI/UX design and implementation
+
+**Odoo Specialists (Coordinated by spec-developer)**
+
+- **odoo18-backend-architect**: Odoo 18 enterprise backend development (Models, ORM, Business Logic)
+- **odoo18-frontend-architect**: Odoo 18 OWL frontend development (Components, Widgets, Client-side)
+- **odoo18-view-generator**: Odoo 18 XML view generation (Forms, Lists, Kanban, Search views)
 
 **Utility Agents**
 
@@ -200,12 +216,41 @@ The `/agent-workflow` command provides one-command execution of the entire devel
 - Phase-specific execution (--phase=planning|development|validation)
 - Language selection (--language=zh|en)
 
-### Sub-Agent Chain Process
+### Enhanced Sub-Agent Chain Process with Tech Leader Coordination
 
-The system uses Claude Code's sub-agent syntax for coordinated execution with BMad-Method story integration:
+The system uses Claude Code's sub-agent syntax for coordinated execution with Tech Leader delegation and BMad-Method story integration:
 
 ```
-First use the spec-analyst sub agent → then spec-story-manager sub agent → then spec-architect sub agent → then spec-planner sub agent → then spec-developer sub agent → then spec-progress-tracker sub agent → then spec-validator sub agent → quality gate decision → if score ≥95% continue to spec-tester, otherwise loop back with feedback based on progress analysis
+First use the spec-analyst sub agent → then spec-story-manager sub agent || spec-architect sub agent (parallel) → then spec-planner sub agent → then spec-developer sub agent as Tech Leader to assess task complexity and coordinate development through intelligent delegation: [SIMPLE TASKS: implement directly | COMPLEX BACKEND: coordinate with odoo18-backend-architect | COMPLEX FRONTEND: coordinate with odoo18-frontend-architect | STANDARD VIEWS: coordinate with odoo18-view-generator | MIXED REQUIREMENTS: coordinate multi-agent team] → then spec-progress-tracker sub agent to monitor Tech Leader coordination → then spec-tester sub agent || spec-reviewer sub agent (parallel) → then spec-validator sub agent → quality gate decision → if score ≥95% continue to deployment, otherwise loop back with feedback based on progress analysis
+```
+
+### Tech Leader Coordination Model
+
+**spec-developer** now serves as the central Tech Leader with enhanced responsibilities:
+
+#### **🎯 Task Complexity Assessment Matrix**
+- **Simple Tasks**: Standard CRUD, basic views, simple API endpoints → Direct implementation
+- **Complex Backend**: Multi-company workflows, advanced ORM, enterprise business logic → odoo18-backend-architect
+- **Complex Frontend**: Custom OWL components, interactive dashboards, advanced widgets → odoo18-frontend-architect  
+- **Standard Views**: XML forms, lists, kanban, search views → odoo18-view-generator
+- **Mixed Requirements**: Full module development, cross-component features → Multi-agent coordination
+
+#### **🔧 Coordination Workflow**
+```mermaid
+graph LR
+    A[Task from spec-planner] --> B[spec-developer Assessment]
+    B --> C{Complexity Analysis}
+    C -->|Simple| D[Direct Implementation]
+    C -->|Backend Heavy| E[odoo18-backend-architect]
+    C -->|Frontend Heavy| F[odoo18-frontend-architect]
+    C -->|View Heavy| G[odoo18-view-generator] 
+    C -->|Full Feature| H[Multi-Agent Team]
+    
+    D --> I[Integration & Delivery]
+    E --> I
+    F --> I
+    G --> I
+    H --> I
 ```
 
 ### Quality Gate Mechanism
@@ -219,11 +264,19 @@ First use the spec-analyst sub agent → then spec-story-manager sub agent → t
 
 ### For Working with Agents
 
-- Start with spec-orchestrator for complete projects
-- Use domain specialists for specific expertise areas
+- **Start with spec-orchestrator** for complete projects
+- **Trust the Tech Leader model**: Let spec-developer make delegation decisions
+- **Use direct specialist calls** only for isolated tasks outside the workflow
 - Allow each agent to complete their phase before intervention
 - Trust the quality gate system for consistent standards
 - Review artifacts between phases for course correction
+
+### For Tech Leader Coordination
+
+- **Let spec-developer assess complexity**: Don't pre-determine which specialist to use
+- **Review delegation decisions**: Check if complexity assessment was appropriate
+- **Monitor integration quality**: Ensure specialist outputs work together
+- **Track coordination metrics**: Use spec-progress-tracker for insights
 
 ### For Project Setup
 

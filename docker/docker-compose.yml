@@ -1,0 +1,148 @@
+# Docker Compose for Local Odoo 18 Enterprise Edition Testing
+# This environment provides local testing capabilities to avoid odoo.sh testing inefficiencies
+# Usage: docker-compose up -d for background execution
+# Access: http://localhost:8069 for Odoo interface
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database Service
+  postgres:
+    image: postgres:15
+    container_name: odoo18_postgres_test
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: odoo18_test
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo_secure_2024
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgres/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5433:5432"  # Avoid conflict with local PostgreSQL
+    networks:
+      - odoo_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo18_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Odoo 18 Enterprise Edition Service
+  odoo:
+    image: odoo:18.0
+    container_name: odoo18_test
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=odoo_secure_2024
+      - DB_NAME=odoo18_test
+      - ODOO_RC=/etc/odoo/odoo.conf
+    volumes:
+      # Mount local Odoo community edition
+      - ../odoo:/usr/lib/python3/dist-packages/odoo:ro
+      # Mount local enterprise modules
+      - ../enterprise:/mnt/extra-addons/enterprise:ro
+      # Mount custom user modules
+      - ../user:/mnt/extra-addons/user:ro
+      # Mount Odoo configuration
+      - ./config/odoo/odoo.conf:/etc/odoo/odoo.conf:ro
+      # Mount data directory for persistence
+      - odoo_data:/var/lib/odoo
+      # Mount logs for debugging
+      - odoo_logs:/var/log/odoo
+    ports:
+      - "8069:8069"   # Odoo web interface
+      - "8072:8072"   # Odoo longpolling
+    networks:
+      - odoo_network
+    command: ["odoo", "--config=/etc/odoo/odoo.conf", "--dev=all"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8069/web/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Redis for session storage and caching
+  redis:
+    image: redis:7-alpine
+    container_name: odoo18_redis_test
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass redis_secure_2024
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"  # Avoid conflict with local Redis
+    networks:
+      - odoo_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # pgAdmin for database management (optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: odoo18_pgadmin_test
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@odoo-test.local
+      PGADMIN_DEFAULT_PASSWORD: pgadmin_secure_2024
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "8080:80"    # pgAdmin web interface
+    networks:
+      - odoo_network
+    depends_on:
+      - postgres
+    profiles:
+      - tools  # Optional service, start with: docker-compose --profile tools up
+
+  # Mail server for email testing (optional)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: odoo18_mailhog_test
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web interface
+    networks:
+      - odoo_network
+    profiles:
+      - tools  # Optional service
+
+volumes:
+  postgres_data:
+    driver: local
+    name: odoo18_postgres_data
+  odoo_data:
+    driver: local
+    name: odoo18_odoo_data
+  odoo_logs:
+    driver: local
+    name: odoo18_odoo_logs
+  redis_data:
+    driver: local
+    name: odoo18_redis_data
+  pgadmin_data:
+    driver: local
+    name: odoo18_pgadmin_data
+
+networks:
+  odoo_network:
+    driver: bridge
+    name: odoo18_test_network
+
+# Health check and testing configuration
+# Use 'docker-compose ps' to check service health
+# Use 'docker-compose logs odoo' to view Odoo logs
+# Use 'docker-compose exec odoo odoo shell' for interactive shell

@@ -26,6 +26,7 @@ The Spec Workflow System leverages Claude Code's Sub-Agents capability to create
 ### Key Features
 
 - **Automated Workflow**: Complete development pipeline from idea to production code
+- **🐳 Local-First Testing**: Fast Docker-based testing (30-60s) before remote deployment
 - **Story-Driven Development**: BMad-Method integration with user story lifecycle management
 - **Progress Tracking**: Real-time task completion tracking with 3-level checkbox hierarchy
 - **Document Sharding**: Automatic fragmentation of large documents for better AI processing
@@ -37,6 +38,8 @@ The Spec Workflow System leverages Claude Code's Sub-Agents capability to create
 ### Benefits
 
 - 10x faster development from concept to code
+- **⚡ 10x faster testing**: Local Docker testing vs slow odoo.sh dependency
+- **🔒 Reliable testing**: Eliminate connectivity issues and remote dependencies
 - Story-driven development with clear acceptance criteria and progress tracking
 - Real-time velocity analytics and blocker identification
 - Automatic document fragmentation for optimal AI processing and collaboration
@@ -44,6 +47,7 @@ The Spec Workflow System leverages Claude Code's Sub-Agents capability to create
 - Comprehensive documentation generated automatically
 - Reduced errors through systematic processes
 - Better collaboration through clear workflows and checkbox progress visibility
+- **🚀 Confident deployments**: Fix issues locally before production deployment
 
 ## System Architecture
 
@@ -54,27 +58,44 @@ graph TD
     A[🚀 Odoo Module Idea] --> B[🎭 spec-orchestrator]
     B --> C[📋 Planning Phase]
     C --> D[🎯 spec-analyst<br/>Odoo Requirements]
-    D --> E[🏗️ spec-architect<br/>Module Architecture]
+    D --> E_SPLIT[🔀 Parallel Split Point]
+    
+    E_SPLIT -->|Branch A| E[📖 spec-story-manager<br/>Story Creation & Lifecycle]
+    E_SPLIT -->|Branch B| E1[🏗️ spec-architect<br/>Module Architecture]
+    
     E --> F[📝 spec-planner<br/>Task Breakdown]
+    E1 --> F
     
     F --> G{🥇 Quality Gate 1<br/>Planning ≥95%}
     G -->|✅ Pass| H[💻 Development Phase]
-    G -->|❌ Fail| D
+    G -->|❌ Fail| H_ROUTE{📊 Issue Analysis}
+    H_ROUTE -->|Story Issues| E
+    H_ROUTE -->|Architecture Issues| E1
+    H_ROUTE -->|Requirements Issues| D
     
-    H --> I[💻 spec-developer<br/>Odoo Implementation]
-    H --> I2[🎨 odoo18-backend-architect<br/>Backend Models]
-    H --> I3[📱 odoo18-view-generator<br/>XML Views]
-    H --> I4[⚡ odoo18-frontend-architect<br/>OWL Components]
-    I --> J[🧪 spec-tester<br/>Testing Suite]
-    I2 --> J
-    I3 --> J
-    I4 --> J
+    H --> I[🎯 spec-developer<br/>Tech Leader Assessment]
+    I --> I_EVAL{"🧠 Complexity<br/>Analysis"}
+    
+    I_EVAL -->|Simple Tasks| I1[🔧 Direct Implementation]
+    I_EVAL -->|Complex Backend| I2[🏗️ odoo18-backend-architect]
+    I_EVAL -->|Complex Frontend| I3[🎨 odoo18-frontend-architect]
+    I_EVAL -->|Standard Views| I4[📋 odoo18-view-generator]
+    I_EVAL -->|Mixed Requirements| I5[🔀 Multi-Agent Team]
+    
+    I1 --> I_MERGE[🔗 Tech Leader Integration]
+    I2 --> I_MERGE
+    I3 --> I_MERGE
+    I4 --> I_MERGE
+    I5 --> I_MERGE
+    
+    I_MERGE --> J[🧪 spec-tester<br/>Testing Suite]
     
     J --> K{🥈 Quality Gate 2<br/>Development ≥80%}
-    K -->|✅ Pass| L[✅ Validation Phase]
+    K -->|✅ Pass| L[🐳 Docker Local Testing]
     K -->|❌ Fail| I
     
-    L --> M[📋 spec-reviewer<br/>Code Review]
+    L --> L1[✅ Validation Phase]
+    L1 --> M[📋 spec-reviewer<br/>Code Review]
     M --> N[✅ spec-validator<br/>Production Check]
     
     N --> O{🥉 Quality Gate 3<br/>Production Ready ≥85%}
@@ -82,6 +103,7 @@ graph TD
     O -->|❌ Fail| Q[🔄 Intelligent Feedback]
     
     Q --> R{📊 Issue Analysis}
+    R -->|Story Issues| E
     R -->|Planning Issues| D
     R -->|Development Issues| I
     R -->|Validation Issues| M
@@ -89,19 +111,26 @@ graph TD
     %% Styling
     classDef orchestrator fill:#1a73e8,color:#fff,stroke:#0d47a1,stroke-width:3px
     classDef phase fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px,color:#000
+    classDef parallel fill:#00bcd4,color:#fff,stroke:#006064,stroke-width:3px
+    classDef story fill:#4caf50,color:#fff,stroke:#2e7d32,stroke-width:2px
     classDef process fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
     classDef odoo fill:#7b1fa2,color:#fff,stroke:#4a148c,stroke-width:2px
     classDef gate fill:#f9ab00,color:#fff,stroke:#e65100,stroke-width:3px
+    classDef docker fill:#0db7ed,color:#fff,stroke:#086dd7,stroke-width:3px
     classDef success fill:#34a853,color:#fff,stroke:#1b5e20,stroke-width:3px
     classDef feedback fill:#ff9800,color:#fff,stroke:#ef6c00,stroke-width:2px
+    classDef decision fill:#03a9f4,color:#fff,stroke:#0277bd,stroke-width:2px
     
     class B orchestrator
-    class C,H,L phase
-    class D,E,F,I,J,M,N process
+    class C,H,L1 phase
+    class E_SPLIT parallel
+    class E story
+    class D,E1,F,I,J,M,N process
     class I2,I3,I4 odoo
     class G,K,O gate
+    class L docker
     class P success
-    class Q,R feedback
+    class Q,R,H_ROUTE feedback
 ```
 
 ## Installation
@@ -129,7 +158,7 @@ graph TD
 
    ```bash
    # Create .claude directory structure in your project
-   mkdir -p ../.claude/agents ../.claude/commands ../.claude/template ../.claude/config ../.claude/hooks
+   mkdir -p ../.claude/agents ../.claude/commands ../.claude/template ../.claude/config ../.claude/hooks ../.claude/docker
    
    # Copy all agents from categorized directories
    cp -r agents/*/*.md ../.claude/agents/
@@ -145,6 +174,9 @@ graph TD
    
    # Copy configuration examples (optional - for Odoo.sh integration)
    cp config/odoo-sh.example.json ../.claude/config/
+   
+   # Copy Docker testing environment (for fast local Odoo testing)
+   cp -r docker/* ../.claude/docker/
    ```
 
 3. **Add RULES to CLAUDE.md**
@@ -201,9 +233,44 @@ graph TD
    - **Smart testing**: Automatic test execution when deployment is ready
    - **Comprehensive reporting**: Detailed deployment and test reports
 
-5. **Configure Odoo.sh Integration (Optional)**
+5. **Setup Docker Local Testing Environment (Recommended for Odoo Projects)**
 
-   For Odoo development projects, set up odoo.sh CI/CD integration:
+   For Odoo development projects, set up fast local testing with Docker:
+
+   ```bash
+   # Navigate to Docker directory
+   cd .claude/docker
+   
+   # Quick setup (automated)
+   ./scripts/docker-setup.sh
+   
+   # Or manual setup
+   docker-compose up -d
+   ```
+
+   **Docker Environment Benefits:**
+   - ⚡ **10x Faster**: Test in 30-60 seconds vs 5+ minutes on odoo.sh
+   - 🔒 **Reliable**: No connectivity issues or remote dependencies
+   - 🎯 **Comprehensive**: Unit, integration, and E2E testing
+   - 🚀 **Confident Deployments**: Fix issues locally before odoo.sh
+
+   **Access Services:**
+   - **Odoo**: http://localhost:8069 (admin/admin_secure_2024)
+   - **pgAdmin**: http://localhost:8080 (with `--profile tools`)
+   - **MailHog**: http://localhost:8025 (with `--profile tools`)
+
+   **Quick Testing:**
+   ```bash
+   # Test AI modules
+   ./.claude/docker/scripts/docker-test.sh
+   
+   # Test specific modules with verbose output
+   ./.claude/docker/scripts/docker-test.sh -m ai_chat,ai_config -v
+   ```
+
+6. **Configure Odoo.sh Integration (Optional)**
+
+   For secondary validation on odoo.sh after local testing:
 
    ```bash
    # Copy the example configuration
@@ -307,6 +374,12 @@ graph TD
    │   │   └── deployment-ready-hook.sh  # Auto testing trigger hook
    │   ├── templates/
    │   │   └── story-template.md   # User story template
+   │   ├── docker/                 # 🐳 Local testing environment
+   │   │   ├── docker-compose.yml  # Complete Odoo 18 testing stack
+   │   │   ├── config/             # Optimized configurations
+   │   │   ├── scripts/            # Setup and testing scripts
+   │   │   ├── logs/               # Test reports and logs
+   │   │   └── README.md           # Docker usage guide
    │   └── agents/
    │       ├── spec-analyst.md
    │       ├── spec-architect.md
@@ -318,6 +391,7 @@ graph TD
    │       ├── spec-story-manager.md
    │       ├── spec-tester.md
    │       ├── spec-validator.md
+   │       ├── docker-manager.md    # 🐳 Docker environment management
    │       ├── senior-backend-architect.md
    │       ├── odoo18-backend-architect.md
    │       ├── odoo-sh-tester.md
@@ -346,7 +420,9 @@ Ask Claude: "Use the spec-orchestrator agent to create a todo list web applicati
 # 3. Design architecture
 # 4. Plan tasks with 3-level checkbox tracking
 # 5. Implement code with real-time progress monitoring
-# 6. Track progress and identify blockers
+# 6. 🐳 Test locally in Docker (30-60 seconds)
+# 7. Deploy to production with confidence
+# 8. Track progress and identify blockers
 # 7. Write tests
 # 8. Review and validate
 ```
@@ -451,12 +527,18 @@ Our system leverages these features by creating specialized agents for each deve
 4. **spec-planner**: Breaks down work into tasks with 3-level checkbox tracking
 5. **Quality Gate 1**: Validates planning completeness
 
-#### Development Phase
+#### Development Phase (Tech Leader Coordination)
 
-1. **spec-developer**: Implements code based on story specifications
-2. **spec-progress-tracker**: Monitors real-time progress and identifies blockers
-3. **spec-tester**: Writes comprehensive tests
-4. **Quality Gate 2**: Validates code quality
+1. **spec-developer**: Serves as Tech Leader, assesses task complexity and coordinates development through intelligent delegation:
+   - **Simple Tasks**: Direct implementation
+   - **Complex Backend**: Delegates to odoo18-backend-architect
+   - **Complex Frontend**: Delegates to odoo18-frontend-architect
+   - **Standard Views**: Delegates to odoo18-view-generator
+   - **Mixed Requirements**: Coordinates multi-agent team
+   - **Integration**: Consolidates specialist outputs into cohesive solution
+2. **spec-progress-tracker**: Monitors Tech Leader coordination and specialist utilization
+3. **spec-tester**: Writes comprehensive tests for all integrated components
+4. **Quality Gate 2**: Validates code quality and Tech Leader coordination effectiveness
 
 #### Validation Phase
 
@@ -494,7 +576,7 @@ Our agents are organized into specialized categories for better organization and
 | spec-story-manager | Story lifecycle management | Requirements | Comprehensive user stories, acceptance criteria |
 | spec-architect | System design | Requirements, Stories | architecture.md, api-spec.md |
 | spec-planner | Task planning with checkboxes | Architecture, Stories | tasks.md with 3-level checkboxes, test-plan.md |
-| spec-developer | Implementation | Tasks, Stories | Source code, task completion updates |
+| spec-developer | **Tech Leader & Implementation Coordinator** | Tasks, Stories | **Task complexity assessment, agent delegation, integrated implementation** |
 | spec-progress-tracker | Progress monitoring | Task status | Progress reports, velocity metrics, blocker alerts |
 | spec-tester | Testing | Code | Test suites, coverage reports |
 | spec-reviewer | Code review | Code | Review report, improvements |
@@ -507,15 +589,15 @@ Our agents are organized into specialized categories for better organization and
 | Agent | Domain | Integration Point |
 |-------|--------|-----------|
 | senior-backend-architect | Backend Systems & Architecture | Architecture/Development phase |
-| odoo18-backend-architect | Odoo 18 Backend Development | Architecture/Development phase |
+| **odoo18-backend-architect** | **Odoo 18 Backend Development** | **Delegated by spec-developer Tech Leader** |
 
 #### Frontend Specialists (frontend/)
 
 | Agent | Domain | Integration Point |
 |-------|--------|-----------|
 | senior-frontend-architect | Frontend Systems & Architecture | Development phase |
-| odoo18-view-generator | Odoo 18 XML View Generation | Development phase |
-| odoo18-frontend-architect | Odoo 18 OWL Frontend Development | Development phase |
+| **odoo18-view-generator** | **Odoo 18 XML View Generation** | **Delegated by spec-developer Tech Leader** |
+| **odoo18-frontend-architect** | **Odoo 18 OWL Frontend Development** | **Delegated by spec-developer Tech Leader** |
 
 #### UI/UX Specialists (ui-ux/)
 

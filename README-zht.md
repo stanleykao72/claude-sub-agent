@@ -54,27 +54,44 @@ graph TD
     A[🚀 Odoo 模組創意] --> B[🎭 spec-orchestrator]
     B --> C[📋 規劃階段]
     C --> D[🎯 spec-analyst<br/>Odoo 需求分析]
-    D --> E[🏗️ spec-architect<br/>模組架構設計]
+    D --> E_SPLIT[🔀 並行分割點]
+    
+    E_SPLIT -->|分支 A| E[📖 spec-story-manager<br/>故事創建與生命週期]
+    E_SPLIT -->|分支 B| E1[🏗️ spec-architect<br/>模組架構設計]
+    
     E --> F[📝 spec-planner<br/>任務分解]
+    E1 --> F
     
     F --> G{🥇 品質門控 1<br/>規劃 ≥95%}
     G -->|✅ 通過| H[💻 開發階段]
-    G -->|❌ 失敗| D
+    G -->|❌ 失敗| H_ROUTE{📊 問題分析}
+    H_ROUTE -->|故事問題| E
+    H_ROUTE -->|架構問題| E1
+    H_ROUTE -->|需求問題| D
     
-    H --> I[💻 spec-developer<br/>Odoo 實作]
-    H --> I2[🎨 odoo18-backend-architect<br/>後端模型]
-    H --> I3[📱 odoo18-view-generator<br/>XML 視圖]
-    H --> I4[⚡ odoo18-frontend-architect<br/>OWL 元件]
-    I --> J[🧪 spec-tester<br/>測試套件]
-    I2 --> J
-    I3 --> J
-    I4 --> J
+    H --> I[🎯 spec-developer<br/>Tech Leader Assessment]
+    I --> I_EVAL{"🧠 Complexity<br/>Analysis"}
+    
+    I_EVAL -->|Simple Tasks| I1[🔧 Direct Implementation]
+    I_EVAL -->|Complex Backend| I2[🏗️ odoo18-backend-architect]
+    I_EVAL -->|Complex Frontend| I3[🎨 odoo18-frontend-architect]
+    I_EVAL -->|Standard Views| I4[📋 odoo18-view-generator]
+    I_EVAL -->|Mixed Requirements| I5[🔀 Multi-Agent Team]
+    
+    I1 --> I_MERGE[🔗 Tech Leader Integration]
+    I2 --> I_MERGE
+    I3 --> I_MERGE
+    I4 --> I_MERGE
+    I5 --> I_MERGE
+    
+    I_MERGE --> J[🧪 spec-tester<br/>測試套件]
     
     J --> K{🥈 品質門控 2<br/>開發 ≥80%}
-    K -->|✅ 通過| L[✅ 驗證階段]
+    K -->|✅ 通過| L[🐳 Docker 本地測試]
     K -->|❌ 失敗| I
     
-    L --> M[📋 spec-reviewer<br/>程式碼審查]
+    L --> L1[✅ 驗證階段]
+    L1 --> M[📋 spec-reviewer<br/>程式碼審查]
     M --> N[✅ spec-validator<br/>生產檢查]
     
     N --> O{🥉 品質門控 3<br/>生產就緒 ≥85%}
@@ -82,6 +99,7 @@ graph TD
     O -->|❌ 失敗| Q[🔄 智慧回饋]
     
     Q --> R{📊 問題分析}
+    R -->|故事問題| E
     R -->|規劃問題| D
     R -->|開發問題| I
     R -->|驗證問題| M
@@ -89,19 +107,27 @@ graph TD
     %% 樣式
     classDef orchestrator fill:#1a73e8,color:#fff,stroke:#0d47a1,stroke-width:3px
     classDef phase fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px,color:#000
+    classDef parallel fill:#00bcd4,color:#fff,stroke:#006064,stroke-width:3px
+    classDef story fill:#4caf50,color:#fff,stroke:#2e7d32,stroke-width:2px
     classDef process fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
     classDef odoo fill:#7b1fa2,color:#fff,stroke:#4a148c,stroke-width:2px
     classDef gate fill:#f9ab00,color:#fff,stroke:#e65100,stroke-width:3px
+    classDef docker fill:#0db7ed,color:#fff,stroke:#086dd7,stroke-width:3px
     classDef success fill:#34a853,color:#fff,stroke:#1b5e20,stroke-width:3px
     classDef feedback fill:#ff9800,color:#fff,stroke:#ef6c00,stroke-width:2px
+    classDef decision fill:#03a9f4,color:#fff,stroke:#0277bd,stroke-width:2px
     
     class B orchestrator
-    class C,H,L phase
-    class D,E,F,I,J,M,N process
+    class C,H,L1 phase
+    class E_SPLIT parallel
+    class E story
+    class D,E1,F,I,J,M,N process
     class I2,I3,I4 odoo
+    class I_EVAL,R,H_ROUTE decision
     class G,K,O gate
+    class L docker
     class P success
-    class Q,R feedback
+    class Q,R,H_ROUTE feedback
 ```
 
 ## 安裝指南
@@ -129,7 +155,7 @@ graph TD
 
    ```bash
    # 在你的專案中建立 .claude 目錄結構
-   mkdir -p ../.claude/agents ../.claude/commands ../.claude/template ../.claude/config
+   mkdir -p ../.claude/agents ../.claude/commands ../.claude/template ../.claude/config ../.claude/hooks ../.claude/docker
    
    # 從分類目錄複製所有代理
    cp -r agents/*/*.md ../.claude/agents/
@@ -145,6 +171,9 @@ graph TD
    
    # 複製配置範例（選用 - 用於 Odoo.sh 整合）
    cp config/odoo-sh.example.json ../.claude/config/
+   
+   # 複製 Docker 測試環境（用於快速本地 Odoo 測試）
+   cp -r docker/* ../.claude/docker/
    ```
 
 3. **新增規則到 CLAUDE.md**
@@ -201,9 +230,44 @@ graph TD
    - **智慧測試**：部署就緒時自動執行測試
    - **全面報告**：詳細的部署和測試報告
 
-5. **配置 Odoo.sh 整合（選用）**
+5. **設定 Docker 本地測試環境（推薦用於 Odoo 專案）**
 
-   對於 Odoo 開發專案，設定 odoo.sh CI/CD 整合：
+   對於 Odoo 開發專案，設定快速本地 Docker 測試：
+
+   ```bash
+   # 進入 Docker 目錄
+   cd .claude/docker
+   
+   # 快速設定（自動化）
+   ./scripts/docker-setup.sh
+   
+   # 或手動設定
+   docker-compose up -d
+   ```
+
+   **Docker 環境優勢：**
+   - ⚡ **快10倍**：30-60秒測試 vs odoo.sh的5+分鐘
+   - 🔒 **可靠**：無連線問題或遠端依賴
+   - 🎯 **全面**：單元、整合和E2E測試
+   - 🚀 **自信部署**：本地修復問題後再部署到odoo.sh
+
+   **存取服務：**
+   - **Odoo**: http://localhost:8069 (admin/admin_secure_2024)
+   - **pgAdmin**: http://localhost:8080 (使用 `--profile tools`)
+   - **MailHog**: http://localhost:8025 (使用 `--profile tools`)
+
+   **快速測試：**
+   ```bash
+   # 測試 AI 模組
+   ./.claude/docker/scripts/docker-test.sh
+   
+   # 使用詳細輸出測試特定模組
+   ./.claude/docker/scripts/docker-test.sh -m ai_chat,ai_config -v
+   ```
+
+6. **配置 Odoo.sh 整合（選用）**
+
+   在本地測試後，為 odoo.sh 的二次驗證：
 
    ```bash
    # 複製範例配置
@@ -239,7 +303,7 @@ graph TD
    ssh your-user@your-project-stage.dev.odoo.com "odoo-bin --version"
    ```
 
-6. **驗證安裝**
+7. **驗證安裝**
 
    **儲存庫結構：**
 
@@ -446,11 +510,18 @@ Claude (spec-orchestrator)：正在啟動個人部落格平台的工作流程...
 3. **spec-planner**：將工作分解為任務
 4. **品質門控 1**：驗證規劃完整性
 
-#### 開發階段
+#### 開發階段（技術主管協調）
 
-1. **spec-developer**：基於任務實作程式碼
-2. **spec-tester**：編寫全面的測試
-3. **品質門控 2**：驗證程式碼品質
+1. **spec-developer**：擔任技術主管，評估任務複雜度並透過智慧委派協調開發：
+   - **簡單任務**：直接實作
+   - **複雜後端**：委派給 odoo18-backend-architect
+   - **複雜前端**：委派給 odoo18-frontend-architect
+   - **標準視圖**：委派給 odoo18-view-generator
+   - **混合需求**：協調多代理團隊
+   - **整合**：整合專家輸出成為統一解決方案
+2. **spec-progress-tracker**：監控技術主管協調和專家利用情況
+3. **spec-tester**：為所有整合元件編寫全面測試
+4. **品質門控 2**：驗證程式碼品質和技術主管協調效果
 
 #### 驗證階段
 
@@ -484,10 +555,11 @@ Claude (spec-orchestrator)：正在啟動個人部落格平台的工作流程...
 | 代理 | 用途 | 輸入 | 輸出 |
 |------|------|------|------|
 | spec-orchestrator | 工作流程協調 | 專案描述 | 狀態報告、路由 |
-| spec-analyst | 需求分析 | 使用者描述 | requirements.md、user-stories.md |
-| spec-architect | 系統設計 | 需求 | architecture.md、api-spec.md |
-| spec-planner | 任務規劃 | 架構 | tasks.md、test-plan.md |
-| spec-developer | 實作 | 任務 | 原始碼、單元測試 |
+| spec-analyst | 需求分析 | 使用者描述 | requirements.md、初始 user-stories.md |
+| spec-story-manager | 故事生命週期管理 | 需求 | 全面使用者故事、驗收條件 |
+| spec-architect | 系統設計 | 需求、故事 | architecture.md、api-spec.md |
+| spec-planner | 任務規劃與核取方塊 | 架構、故事 | tasks.md 含 3 層級核取方塊、test-plan.md |
+| spec-developer | **技術主管和實作協調員** | 任務、故事 | **任務複雜度評估、代理委派、整合實作** |
 | spec-tester | 測試 | 程式碼 | 測試套件、覆蓋率報告 |
 | spec-reviewer | 程式碼審查 | 程式碼 | 審查報告、改進建議 |
 | spec-validator | 最終驗證 | 所有產物 | 驗證報告、品質分數 |
@@ -499,15 +571,15 @@ Claude (spec-orchestrator)：正在啟動個人部落格平台的工作流程...
 | 代理 | 領域 | 整合點 |
 |------|------|---------|
 | senior-backend-architect | 後端系統與架構 | 架構/開發階段 |
-| odoo18-backend-architect | Odoo 18 後端開發 | 架構/開發階段 |
+| **odoo18-backend-architect** | **Odoo 18 後端開發** | **由 spec-developer 技術主管委派** |
 
 #### 前端專家 (frontend/)
 
 | 代理 | 領域 | 整合點 |
 |------|------|---------|
 | senior-frontend-architect | 前端系統與架構 | 開發階段 |
-| odoo18-view-generator | Odoo 18 XML 視圖產生 | 開發階段 |
-| odoo18-frontend-architect | Odoo 18 OWL 前端開發 | 開發階段 |
+| **odoo18-view-generator** | **Odoo 18 XML 視圖產生** | **由 spec-developer 技術主管委派** |
+| **odoo18-frontend-architect** | **Odoo 18 OWL 前端開發** | **由 spec-developer 技術主管委派** |
 
 #### UI/UX 專家 (ui-ux/)
 

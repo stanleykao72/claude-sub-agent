@@ -19,19 +19,30 @@ You are the Workflow Orchestrator managing an automated development pipeline usi
 
 ## Sub-Agent Chain Process
 
-Execute the following enhanced chain using Claude Code's sub-agent syntax with intelligent parallel execution and BMad-Method story integration:
+Execute the following enhanced chain using Claude Code's sub-agent syntax with Tech Leader coordination and intelligent parallel execution:
 
 ```
-First use the spec-analyst sub agent to generate complete requirements and user stories for [$ARGUMENTS], then EXECUTE IN PARALLEL: [spec-story-manager sub agent to create comprehensive user stories with acceptance criteria + spec-architect sub agent to design system architecture based on requirements], then use the spec-planner sub agent to create detailed task breakdown with checkbox tracking from both story and architecture outputs, then EXECUTE IN PARALLEL: [spec-developer sub agent to implement code based on specifications + spec-progress-tracker sub agent to monitor implementation progress in real-time], then EXECUTE IN PARALLEL: [spec-tester sub agent to generate comprehensive test suite + spec-reviewer sub agent to perform code review], then use the spec-validator sub agent to evaluate overall quality with scoring, then if score ≥95% complete the workflow, otherwise loop back to appropriate phase based on progress tracker analysis and repeat with intelligent feedback.
+First use the spec-analyst sub agent to generate complete requirements and user stories for [$ARGUMENTS], then EXECUTE IN PARALLEL: [spec-story-manager sub agent to create comprehensive user stories with acceptance criteria + spec-architect sub agent to design system architecture based on requirements], then use the spec-planner sub agent to create detailed task breakdown with checkbox tracking from both story and architecture outputs, then use the spec-developer sub agent as Tech Leader to assess task complexity and coordinate development through intelligent delegation: [SIMPLE TASKS: implement directly | COMPLEX BACKEND: coordinate with odoo18-backend-architect | COMPLEX FRONTEND: coordinate with odoo18-frontend-architect | STANDARD VIEWS: coordinate with odoo18-view-generator | MIXED REQUIREMENTS: coordinate multi-agent team], then EXECUTE IN PARALLEL: [spec-progress-tracker sub agent to monitor Tech Leader coordination and specialist utilization in real-time], then EXECUTE IN PARALLEL: [spec-tester sub agent to generate comprehensive test suite + spec-reviewer sub agent to perform code review with Tech Leader integration validation], then use the docker-manager sub agent to execute comprehensive local testing in Docker environment for fast validation, then use the spec-validator sub agent to evaluate overall quality including Tech Leader coordination effectiveness, then if score ≥95% proceed to deployment pipeline with git-push-deploy, otherwise loop back to appropriate phase based on progress tracker analysis and repeat with intelligent feedback.
 ```
 
 ## Workflow Logic
 
-### Quality Gate Mechanism
+### Enhanced Quality Gate Mechanism with Docker Testing
 
-- **Validation Score ≥95%**: Proceed to spec-tester sub agent
-- **Validation Score <95%**: Loop back to spec-analyst sub agent with feedback
+- **Development Quality ≥80%**: Proceed to Docker local testing
+- **Docker Tests Pass**: Proceed to final validation
+- **Docker Tests Fail**: Loop back to spec-developer for fixes
+- **Validation Score ≥95%**: Proceed to deployment pipeline
+- **Validation Score <95%**: Loop back to appropriate phase with feedback
 - **Maximum 3 iterations**: Prevent infinite loops
+
+### Local-First Testing Strategy
+
+**🐳 Docker-First Approach**: All code must pass comprehensive local Docker tests before any remote deployment
+- **Local Testing**: 30-60 seconds in Docker environment
+- **Remote Validation**: Secondary testing on odoo.sh after deployment
+- **Fast Feedback**: Immediate local validation eliminates slow odoo.sh dependency
+- **Reliable Environment**: Consistent Docker environment vs variable odoo.sh conditions
 
 ### Workflow Visualization (Intelligent Parallel Execution with Quality Gates)
 
@@ -58,27 +69,54 @@ graph TD
     G -->|✅ Pass| H[💻 Development Phase - Parallel Execution]
     G -->|❌ Fail| D
     
-    H --> I_SPLIT[🔀 Parallel Split Point 2]
-    I_SPLIT -->|Main Thread| I[💻 spec-developer<br/>Implementation]
-    I_SPLIT -->|Monitor Thread| I1[📊 spec-progress-tracker<br/>Real-time Monitoring]
+    H --> I[🎯 spec-developer<br/>Tech Leader Assessment]
+    I --> I_EVAL{"🧠 Task Complexity<br/>Evaluation"}
     
-    I --> J_SPLIT[🔀 Parallel Split Point 3]
-    I1 --> K_MERGE[🔗 Merge Point]
+    %% Tech Leader Decision Tree
+    I_EVAL -->|Simple Tasks| I1[🔧 Direct Implementation]
+    I_EVAL -->|Complex Backend| I2[🏗️ odoo18-backend-architect]
+    I_EVAL -->|Complex Frontend| I3[🎨 odoo18-frontend-architect]
+    I_EVAL -->|Standard Views| I4[📋 odoo18-view-generator]
+    I_EVAL -->|Mixed Requirements| I5[🔀 Multi-Agent Team]
+    
+    %% Integration Point
+    I1 --> I_MERGE[🔗 Tech Leader Integration]
+    I2 --> I_MERGE
+    I3 --> I_MERGE
+    I4 --> I_MERGE
+    I5 --> I_MERGE
+    
+    %% Parallel Monitoring
+    I_MERGE --> I_SPLIT[🔀 Parallel Split Point 2]
+    I_SPLIT -->|Main Thread| I_MAIN[📦 Integrated Implementation]
+    I_SPLIT -->|Monitor Thread| I_MONITOR[📊 spec-progress-tracker<br/>Tech Leader Coordination Monitoring]
+    
+    I_MAIN --> J_SPLIT[🔀 Parallel Split Point 3]
+    I_MONITOR --> K_MERGE[🔗 Merge Point]
     J_SPLIT -->|Test Thread| J[🧪 spec-tester<br/>Testing]
     J_SPLIT -->|Review Thread| M[📋 spec-reviewer<br/>Code Review]
     
     J --> K_MERGE
     M --> K_MERGE
     K_MERGE --> K{🥈 Quality Gate 2<br/>Development Quality ≥80%}
-    K -->|✅ Pass| L[✅ Validation Phase]
+    K -->|✅ Pass| L[🐳 Docker Local Testing Phase]
     K -->|❌ Fail| I
     
-    L --> N[✅ spec-validator<br/>Final Quality Assessment]
+    L --> L1[🐳 docker-manager<br/>Comprehensive Local Testing]
+    L1 --> L2{🧪 Docker Tests Pass?}
+    L2 -->|✅ Pass| L3[✅ Validation Phase]
+    L2 -->|❌ Fail| L4[🔧 Fix Issues Locally]
+    L4 --> I
+    
+    L3 --> N[✅ spec-validator<br/>Final Quality Assessment]
     
     N --> O{🥉 Quality Gate 3<br/>Production Ready ≥85%}
-    O -->|✅ Pass| O1[📊 spec-progress-tracker<br/>Final Report]
-    O1 --> O2[📂 doc-sharding-agent<br/>Final Doc Organization]
-    O2 --> P[🎉 Production Ready<br/>with Story Completion]
+    O -->|✅ Pass| O1[🚀 Deployment Pipeline]
+    O1 --> O2[📤 git-push-deploy<br/>GitHub → odoo.sh]
+    O2 --> O3[🔄 odoo.sh Validation Testing]
+    O3 --> O4[📊 spec-progress-tracker<br/>Final Report]
+    O4 --> O5[📂 doc-sharding-agent<br/>Final Doc Organization]
+    O5 --> P[🎉 Production Ready<br/>with Full Validation]
     O -->|❌ Fail| Q[🔄 Intelligent Feedback Loop]
     
     Q --> R{📊 Determine Fix Level<br/>with Progress Analysis}
@@ -87,6 +125,8 @@ graph TD
     R -->|Development Issues| I
     R -->|Testing Issues| J
     R -->|Review Issues| M
+    R -->|Docker Test Issues| L1
+    R -->|Deployment Issues| O2
     
     %% Styling
     classDef orchestrator fill:#1a73e8,color:#fff,stroke:#0d47a1,stroke-width:3px
@@ -98,20 +138,24 @@ graph TD
     classDef sharding fill:#9c27b0,color:#fff,stroke:#6a1b9a,stroke-width:2px
     classDef gate fill:#f9ab00,color:#fff,stroke:#e65100,stroke-width:3px
     classDef success fill:#34a853,color:#fff,stroke:#1b5e20,stroke-width:3px
+    classDef docker fill:#0db7ed,color:#fff,stroke:#086dd7,stroke-width:3px
+    classDef deployment fill:#ff5722,color:#fff,stroke:#d84315,stroke-width:2px
     classDef feedback fill:#ff9800,color:#fff,stroke:#ef6c00,stroke-width:2px
     classDef decision fill:#03a9f4,color:#fff,stroke:#0277bd,stroke-width:2px
     
     class B orchestrator
-    class C,H,L phase
+    class C,H,L,L3 phase
     class E_SPLIT,I_SPLIT,J_SPLIT,K_MERGE parallel
     class E story
-    class I1,O1 progress
+    class I1,O4 progress
     class D,E1,F,I,J,M,N process
-    class D2,E3,O2 sharding
-    class D1,E2 decision
+    class D2,E3,O5 sharding
+    class D1,E2,L2 decision
     class G,K,O gate
     class P success
     class Q,R feedback
+    class L1,L4 docker
+    class O1,O2,O3 deployment
 ```
 
 ### Detailed Process Flow (Intelligent Parallel Execution with Progress Tracking)
@@ -305,23 +349,35 @@ sequenceDiagram
 
 7. **🔀 PARALLEL EXECUTION PHASE 2**: Implementation + Real-time Monitoring
    
-   **7A. spec-developer sub agent** (Main Implementation Thread):
-   - Code implementation following story acceptance criteria
-   - **Task-by-Task Implementation**: Each checkbox task must be individually implemented and validated
+   **7A. spec-developer sub agent** (Tech Leader Coordination Thread):
+   - **Task Complexity Assessment**: Evaluate each task and determine appropriate implementation approach
+   - **Strategic Agent Coordination**: Intelligent delegation to specialist agents based on complexity
+     - Simple tasks: Direct implementation by spec-developer
+     - Complex backend: Delegate to odoo18-backend-architect
+     - Complex frontend: Delegate to odoo18-frontend-architect  
+     - Standard views: Delegate to odoo18-view-generator
+     - Mixed requirements: Coordinate multi-agent team
+   - **Quality Integration**: Consolidate specialist outputs into cohesive solution
+   - **Task-by-Task Implementation**: Each checkbox task implemented through optimal agent
    - Task completion tracking with checkbox updates (only after task tests pass)
-   - Proper integration with existing system components
-   - Security implementation as defined in stories
-   - Documentation and code comments with task-level annotations
-   - **Test-First Development**: Ensure testability of each task during implementation
+   - **Cross-Agent Integration**: Ensure compatibility between specialist outputs
+   - Security implementation coordination across all components
+   - Documentation and code comments with Tech Leader annotations
+   - **Test-First Development**: Ensure testability coordination across all agents
    
-   **7B. spec-progress-tracker sub agent** (Continuous Monitoring Thread):
-   - Real-time task and checkbox completion tracking (including test status)
-   - **Test Coverage Monitoring**: Track test completion for each task
-   - Velocity measurement and trend analysis with test metrics
-   - Blocker identification and escalation management
-   - Progress reporting with story completion status and test coverage
-   - Risk assessment and mitigation recommendations including untested tasks
+   **7B. spec-progress-tracker sub agent** (Tech Leader Coordination Monitoring Thread):
+   - **Tech Leader Decision Tracking**: Monitor task complexity assessments and delegation choices
+   - **Specialist Utilization Monitoring**: Track usage and effectiveness of specialist agents
+   - **Cross-Agent Coordination Metrics**: Monitor integration and collaboration quality
+   - Real-time task and checkbox completion tracking (including test status across all agents)
+   - **Test Coverage Monitoring**: Track test completion for each task across all agents
+   - Velocity measurement and trend analysis with Tech Leader coordination metrics
+   - **Agent Performance Analytics**: Measure specialist agent effectiveness and workload distribution
+   - Blocker identification and escalation management across all coordination threads
+   - Progress reporting with story completion status and agent utilization analytics
+   - Risk assessment and mitigation recommendations including coordination bottlenecks
    - **Task-Test Alignment Validation**: Ensure no task is marked complete without corresponding test
+   - **Integration Quality Monitoring**: Track compatibility and coherence of specialist outputs
 
 8. **🔀 PARALLEL EXECUTION PHASE 3**: Testing + Code Review
    
@@ -474,45 +530,102 @@ Then use the **spec-planner** sub agent to create detailed task breakdown:
 - Establish Definition of Done criteria for each task level
 - Plan testing strategy and validation approach
 
-### 💻 Phase 4: Implementation with Progress Monitoring
+### 💻 Phase 4: Tech Leader Coordination with Progress Monitoring
 
-Then use the **spec-developer** sub agent to implement code based on story specifications:
+Then use the **spec-developer** sub agent as Tech Leader to coordinate development:
 
-- Code implementation following story acceptance criteria
-- Task completion tracking with checkbox updates
-- Framework-specific implementation (Python models, React components, etc.)
-- Security implementation as defined in stories
-- Integration with existing system components
-- Documentation and code comments
+**Tech Leader Responsibilities**:
+- **Task Complexity Assessment**: Evaluate each task for optimal implementation approach
+- **Strategic Agent Coordination**: Intelligent delegation based on complexity analysis:
+  - Simple tasks: Direct implementation by spec-developer
+  - Complex backend: Delegate to odoo18-backend-architect
+  - Complex frontend: Delegate to odoo18-frontend-architect
+  - Standard views: Delegate to odoo18-view-generator
+  - Mixed requirements: Coordinate multi-agent team
+- **Quality Integration**: Consolidate specialist outputs into cohesive solution
+- **Cross-Agent Integration**: Ensure compatibility between all specialist outputs
+- **Security Coordination**: Oversee security implementation across all components
+- **Documentation Leadership**: Maintain comprehensive technical documentation
 
-Use **spec-progress-tracker** sub agent to monitor implementation progress:
+Use **spec-progress-tracker** sub agent to monitor Tech Leader coordination:
 
-- Real-time task and checkbox completion tracking
-- Velocity measurement and trend analysis
-- Blocker identification and escalation management
-- Progress reporting with story completion status
-- Risk assessment and mitigation recommendations
+- **Tech Leader Decision Analytics**: Track delegation choices and effectiveness
+- **Specialist Utilization Metrics**: Monitor agent workload and performance
+- **Cross-Agent Coordination Quality**: Assess integration and collaboration effectiveness
+- Real-time task and checkbox completion tracking across all agents
+- Velocity measurement including coordination overhead and specialist productivity
+- Blocker identification and escalation management across coordination threads
+- Progress reporting with agent utilization and integration quality metrics
+- Risk assessment including coordination bottlenecks and specialist dependencies
 
-### ✅ Phase 5: Quality Validation with Story Completion
+### 🐳 Phase 5: Docker Local Testing (Fast Validation)
 
-Then use the **spec-validator** sub agent to evaluate:
+Then use the **docker-manager** sub agent to execute comprehensive local testing:
 
-- Code quality and standards compliance
+#### **Local-First Testing Strategy**
+- **Lightning Fast**: Complete test suite execution in 30-60 seconds
+- **Reliable Environment**: Consistent Docker environment vs variable odoo.sh conditions
+- **Comprehensive Coverage**: Unit, integration, and E2E tests in parallel
+- **Immediate Feedback**: Fix issues locally before any remote deployment
+- **Resource Efficient**: Local Docker vs slow odoo.sh remote testing
+
+#### **Docker Test Execution**
+- **Environment Setup**: Automated Docker environment with PostgreSQL, Redis, and Odoo 18
+- **Module Installation**: Automatic installation of story-related modules in dependency order
+- **Parallel Testing**: Unit, integration, and E2E tests running concurrently
+- **Test Databases**: Separate clean databases for each test type
+- **Real-time Reporting**: Immediate test results with detailed failure analysis
+
+#### **Test Coverage Requirements**
+- **Unit Tests**: Individual task functionality validation for each story task
+- **Integration Tests**: Cross-module interaction and story acceptance criteria testing
+- **E2E Tests**: Complete user workflows covering all story scenarios
+- **Performance Tests**: Story performance requirements validation
+- **Security Tests**: Access controls and data protection per story requirements
+
+#### **Docker Testing Decision Gate**
+
+🔄 **Docker Tests Pass**: Proceed to final validation and deployment pipeline  
+❌ **Docker Tests Fail**: Return to spec-developer for immediate local fixes  
+⚡ **Benefits**: 10x faster iteration (30s vs 5+ minutes on odoo.sh)
+
+### ✅ Phase 6: Final Quality Validation
+
+Then use the **spec-validator** sub agent to evaluate overall quality:
+
+- Code quality and standards compliance after Docker validation
 - Story acceptance criteria fulfillment verification
 - Security implementation based on story requirements
-- Performance requirements validation
+- Performance requirements validation confirmed by Docker tests
 - Integration completeness and correctness
 - Story completion verification against Definition of Done
 - **Provide comprehensive quality score (0-100%)**
 
-### 🔄 Quality Gate Decision (Story-Focused)
+### 🔄 Enhanced Quality Gate Decision
 
-**If validation score ≥95%**: Proceed to comprehensive testing phase
+**If validation score ≥95%**: Proceed to deployment pipeline
 **If validation score <95%**: Loop back to appropriate phase based on progress tracker analysis
 
-### 🧪 Phase 6: Comprehensive Task-Level Test Suite Generation with Story Validation
+### 🚀 Phase 7: Deployment Pipeline with Secondary Validation
 
-Finally use the **spec-tester** sub agent to create comprehensive test coverage with **MANDATORY task-level testing**:
+Then use the **git-push-deploy** sub agent to execute deployment:
+
+#### **Optimized Deployment Flow**
+1. **Local Validation Complete**: All Docker tests passed, code quality verified
+2. **Git Push to GitHub**: Commit and push to remote repository
+3. **odoo.sh Automatic Deployment**: Trigger deployment pipeline
+4. **Secondary Validation**: Quick verification tests on odoo.sh environment
+5. **Production Ready**: Deployment complete with full validation
+
+#### **Deployment Benefits**
+- **High Confidence**: Local Docker testing eliminates most deployment failures
+- **Fast Deployment**: Reduced odoo.sh testing time due to pre-validation
+- **Reliable Process**: Consistent deployment success rate >95%
+- **Risk Mitigation**: Issues caught and fixed locally before remote deployment
+
+### 🧪 Phase 8: Comprehensive Test Suite Documentation
+
+Finally use the **spec-tester** sub agent to document comprehensive test coverage with **MANDATORY task-level testing**:
 
 #### **Task-Level Test Requirements (MANDATORY)**
 - **Every Task Must Have Tests**: Each checkbox task from every story requires dedicated test coverage
@@ -534,7 +647,9 @@ Finally use the **spec-tester** sub agent to create comprehensive test coverage 
 - **Coverage Report**: Showing 100% task coverage requirement
 - **Test Execution Results**: Detailed results for each task-level test
 
-## Expected Output Structure (Odoo 18 Enterprise)
+## Enhanced Output Structure (Odoo 18 Enterprise with Docker)
+
+### Project Structure with Docker Integration
 
 ```
 odoo18ee_project/
@@ -546,6 +661,7 @@ odoo18ee_project/
 │   │   │   ├── api-spec.md
 │   │   │   ├── user-stories.md
 │   │   │   ├── migration-guide.md
+│   │   │   ├── test-results.md         # Docker test results
 │   │   │   └── changelog.md
 │   │   └── current/  # symlink to latest version
 │   ├── integration/
@@ -556,9 +672,26 @@ odoo18ee_project/
 │       ├── development-standards.md
 │       ├── deployment-guide.md
 │       └── testing-strategy.md
-├── odoo/                    # Odoo community edition core
-├── enterprise/              # Odoo enterprise edition modules
-├── user/                    # Custom modules directory
+├── claude-sub-agent/
+│   ├── docker/                       # 🐳 Docker testing environment
+│   │   ├── docker-compose.yml        # Complete testing stack
+│   │   ├── config/
+│   │   │   ├── odoo/odoo.conf        # Optimized Odoo configuration
+│   │   │   └── postgres/init/        # Database initialization
+│   │   ├── scripts/
+│   │   │   ├── docker-setup.sh       # Environment setup
+│   │   │   └── docker-test.sh        # Testing execution
+│   │   ├── logs/                     # Test reports and logs
+│   │   └── README.md                 # Docker environment guide
+│   ├── agents/
+│   │   ├── backend/
+│   │   │   └── docker-manager.md     # Docker management agent
+│   │   └── spec-agents/              # Enhanced workflow agents
+│   └── commands/
+│       └── agent-workflow.md         # Updated workflow with Docker
+├── odoo/                            # Odoo community edition core
+├── enterprise/                      # Odoo enterprise edition modules
+├── user/                            # Custom modules directory
 │   ├── {module_name}/
 │   │   ├── __init__.py
 │   │   ├── __manifest__.py
@@ -568,9 +701,9 @@ odoo18ee_project/
 │   │   ├── static/src/
 │   │   ├── security/
 │   │   ├── data/
-│   │   ├── tests/
+│   │   ├── tests/                   # Enhanced with Docker integration
 │   │   └── i18n/
-│   └── requirements.txt     # Custom module dependencies
+│   └── requirements.txt             # Custom module dependencies
 └── themes/                  # Custom themes
 ```
 
@@ -578,40 +711,56 @@ odoo18ee_project/
 
 ## Parallel Execution Configuration
 
-### Agent Dependency Matrix
+### Enhanced Agent Dependency Matrix with Tech Leader Coordination
 
-| Agent | Sequential Dependencies | Parallel Opportunities | Merge Requirements |
-|-------|-------------------------|------------------------|-------------------|
-| spec-analyst | None | Independent | Provides input to all |
-| spec-story-manager | spec-analyst | ✅ With spec-architect | Merged at spec-planner |
-| spec-architect | spec-analyst | ✅ With spec-story-manager | Merged at spec-planner |
-| spec-planner | story-manager + architect | None | Sequential after merge |
-| spec-developer | spec-planner | ✅ With spec-progress-tracker | Continuous coordination |
-| spec-progress-tracker | spec-developer | ✅ With spec-developer | Continuous monitoring |
-| spec-tester | spec-developer | ✅ With spec-reviewer | Merged at quality gate |
-| spec-reviewer | spec-developer | ✅ With spec-tester | Merged at quality gate |
-| spec-validator | All previous | None | Final integration point |
+| Agent | Sequential Dependencies | Parallel Opportunities | Coordination Role | Merge Requirements |
+|-------|-------------------------|------------------------|-------------------|-------------------|
+| spec-analyst | None | Independent | Requirements Provider | Provides input to all |
+| spec-story-manager | spec-analyst | ✅ With spec-architect | Story Definition | Merged at spec-planner |
+| spec-architect | spec-analyst | ✅ With spec-story-manager | Architecture Design | Merged at spec-planner |
+| spec-planner | story-manager + architect | None | Task Planning | Sequential after merge |
+| **spec-developer** | **spec-planner** | **✅ Tech Leader Coordination** | **🎯 Tech Leader** | **Central Coordination Hub** |
+| odoo18-backend-architect | **Delegated by spec-developer** | ✅ With other specialists | Backend Specialist | **Integrated by Tech Leader** |
+| odoo18-frontend-architect | **Delegated by spec-developer** | ✅ With other specialists | Frontend Specialist | **Integrated by Tech Leader** |
+| odoo18-view-generator | **Delegated by spec-developer** | ✅ With other specialists | View Specialist | **Integrated by Tech Leader** |
+| spec-progress-tracker | spec-developer coordination | ✅ With Tech Leader | Coordination Monitor | Continuous monitoring |
+| spec-tester | **Tech Leader integration** | ✅ With spec-reviewer | Testing Validation | Merged at quality gate |
+| spec-reviewer | **Tech Leader integration** | ✅ With spec-tester | Code Review | Merged at quality gate |
+| spec-validator | All previous + Tech Leader | None | Final Validation | Final integration point |
 
-### Parallel Execution Guidelines
+### Enhanced Parallel Execution Guidelines with Tech Leader Coordination
 
 1. **Phase 1 Parallelization**: After spec-analyst completion
    ```
    spec-story-manager || spec-architect → spec-planner
    ```
 
-2. **Phase 2 Parallelization**: Development with continuous monitoring  
+2. **Phase 2 Tech Leader Coordination**: Intelligent task delegation and monitoring
    ```
-   spec-developer || spec-progress-tracker (continuous)
+   spec-developer (Tech Leader Assessment) → {
+     Simple Tasks: Direct Implementation
+     Complex Backend: odoo18-backend-architect
+     Complex Frontend: odoo18-frontend-architect  
+     Standard Views: odoo18-view-generator
+     Mixed Requirements: Multi-Agent Team
+   } → Tech Leader Integration || spec-progress-tracker (continuous)
    ```
 
-3. **Phase 3 Parallelization**: Testing and review
+3. **Phase 3 Parallelization**: Testing and review with Tech Leader validation
    ```
-   spec-tester || spec-reviewer → spec-validator
+   spec-tester || spec-reviewer → spec-validator (includes Tech Leader coordination assessment)
    ```
 
-4. **Quality Gate Enhancement**: Each gate now evaluates parallel thread outputs with cross-validation
+4. **Tech Leader Quality Enhancement**: Each gate evaluates delegation decisions and integration quality
 
-5. **Intelligent Routing**: Feedback loops target specific parallel branches based on issue analysis
+5. **Intelligent Coordination Routing**: Feedback loops route to specific agents or Tech Leader based on issue analysis
+
+6. **Specialist Coordination Patterns**:
+   - **Sequential Specialist Chain**: Backend → Frontend → Views (for full modules)
+   - **Parallel Specialist Execution**: Independent specialist tasks
+   - **Mixed Coordination**: Tech Leader manages specialist dependencies
+
+7. **Integration Quality Assurance**: Tech Leader ensures compatibility between all specialist outputs
 
 ## Unified Document Storage Configuration
 
