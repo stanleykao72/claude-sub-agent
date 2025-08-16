@@ -2,7 +2,7 @@
 
 > **Language / 語言**: [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zht.md)
 
-A comprehensive AI-driven development workflow system built on Claude Code's Sub-Agents feature. This system transforms project ideas into production-ready code through specialized AI agents working in coordinated phases.
+A comprehensive AI-driven development workflow system built on Claude Code's Sub-Agents feature with **Structured Response Architecture**. This system transforms project ideas into production-ready implementation plans through specialized AI agents working in coordinated research phases with 10x token efficiency.
 
 ## Table of Contents
 
@@ -21,11 +21,13 @@ A comprehensive AI-driven development workflow system built on Claude Code's Sub
 
 ## Overview
 
-The Spec Workflow System leverages Claude Code's Sub-Agents capability to create a multi-agent development pipeline. Each agent is a specialized expert that handles specific aspects of the software development lifecycle, from requirements analysis to final validation.
+The Spec Workflow System leverages Claude Code's Sub-Agents capability with **Structured Response Architecture** to create a multi-agent research and planning pipeline. Each agent is a specialized expert that researches specific aspects of the software development lifecycle, returning structured findings for comprehensive implementation planning.
 
 ### Key Features
 
-- **Automated Workflow**: Complete development pipeline from idea to production code
+- **Automated Research Workflow**: Complete research and planning pipeline from idea to implementation-ready plans
+- **Structured Response Architecture**: 10x token efficiency through delimited response format
+- **Context Management**: .context/ directory system for organized plan file coordination
 - **🐳 Local-First Testing**: Fast Docker-based testing (30-60s) before remote deployment
 - **Story-Driven Development**: BMad-Method integration with user story lifecycle management
 - **Progress Tracking**: Real-time task completion tracking with 3-level checkbox hierarchy
@@ -37,7 +39,8 @@ The Spec Workflow System leverages Claude Code's Sub-Agents capability to create
 
 ### Benefits
 
-- 10x faster development from concept to code
+- **10x Token Efficiency**: Structured response architecture eliminates context pollution
+- 10x faster development from concept to implementation-ready plans
 - **⚡ 10x faster testing**: Local Docker testing vs slow odoo.sh dependency
 - **🔒 Reliable testing**: Eliminate connectivity issues and remote dependencies
 - Story-driven development with clear acceptance criteria and progress tracking
@@ -179,7 +182,49 @@ graph TD
    cp -r docker/* ../.claude/docker/
    ```
 
-3. **Add RULES to CLAUDE.md**
+3. **🆕 Setup Context Management System (Recommended)**
+
+   The context management system enables optimal sub-agent coordination and token efficiency:
+
+   ```bash
+   # Create context directory structure in your project
+   mkdir -p ../.context/agent_plans
+   
+   # Copy context templates
+   cp -r context/* ../.context/
+   
+   # Make context directory writable for agents
+   chmod 755 ../.context
+   chmod 755 ../.context/agent_plans
+   
+   # Add to .gitignore (context files are temporary working files)
+   echo "" >> ../.gitignore
+   echo "# Claude Sub-Agent Context Files (temporary)" >> ../.gitignore  
+   echo ".context/" >> ../.gitignore
+   ```
+
+   **Context System Benefits**:
+   - 🚀 **10x Token Efficiency**: Sub-agents use file-based context sharing vs. conversation context
+   - 🧠 **Improved Coordination**: Clear communication between agents through structured plans
+   - 📋 **Better Planning**: Each agent creates detailed research/implementation plans
+   - 🔄 **Stateful Sessions**: Context persists across agent interactions
+
+   **Context Directory Structure**:
+   ```
+   .context/
+   ├── session_context.md         # Main project context
+   ├── planning_context.md         # Planning phase context  
+   ├── development_context.md      # Development phase context
+   └── agent_plans/               # Agent research & plans
+       ├── requirements_plan.md   # spec-analyst research
+       ├── architecture_plan.md   # spec-architect research
+       ├── development_plan.md    # spec-developer research
+       ├── backend_plan.md        # backend specialist research
+       ├── frontend_plan.md       # frontend specialist research
+       └── odoo_plan.md          # Odoo specialist research
+   ```
+
+4. **Add RULES to CLAUDE.md**
 
    ```md
    ## Project Documentation Conventions (Important)
@@ -214,7 +259,7 @@ graph TD
    > **Important:** Always follow naming conventions and ensure proper internationalization. Use document sharding for optimal AI processing of large files.
    ```
 
-4. **Configure Claude Code Hooks (Recommended)**
+5. **Configure Claude Code Hooks (Recommended)**
 
    Claude Code Hooks provide event-driven automation for odoo.sh deployment monitoring:
 
@@ -233,7 +278,7 @@ graph TD
    - **Smart testing**: Automatic test execution when deployment is ready
    - **Comprehensive reporting**: Detailed deployment and test reports
 
-5. **Setup Docker Local Testing Environment (Recommended for Odoo Projects)**
+6. **Setup Docker Local Testing Environment (Recommended for Odoo Projects)**
 
    For Odoo development projects, set up fast local testing with Docker:
 
@@ -268,7 +313,7 @@ graph TD
    ./.claude/docker/scripts/docker-test.sh -m ai_chat,ai_config -v
    ```
 
-6. **Configure Odoo.sh Integration (Optional)**
+7. **Configure Odoo.sh Integration (Optional)**
 
    For secondary validation on odoo.sh after local testing:
 
@@ -306,7 +351,7 @@ graph TD
    ssh your-user@your-project-stage.dev.odoo.com "odoo-bin --version"
    ```
 
-6. **Verify installation**
+8. **Verify installation**
 
    **Repository Structure:**
 
@@ -359,31 +404,16 @@ graph TD
 
    ```text
    your-project/
-   ├── .claude/
-   │   ├── commands/
-   │   │   ├── agent-workflow.md   # Main workflow slash command
-   │   │   ├── create-story.md     # Story creation command
-   │   │   ├── deploy-odoo.md      # Odoo.sh deployment command
-   │   │   ├── git-push-deploy.md  # Git push with deployment monitoring
-   │   │   ├── shard-document.md   # Document sharding command
-   │   │   └── track-progress.md   # Progress tracking command
-   │   ├── config/
-   │   │   └── odoo-sh.json        # Odoo.sh configuration (optional)
-   │   ├── hooks/
-   │   │   ├── post-git-push-hook.sh     # Auto deployment monitoring hook
-   │   │   └── deployment-ready-hook.sh  # Auto testing trigger hook
-   │   ├── templates/
-   │   │   └── story-template.md   # User story template
+   ├── .claude/                    # Claude Code configuration
+   │   ├── commands/               # Slash commands
+   │   ├── config/                 # Configuration files
+   │   ├── hooks/                  # Event-driven automation
+   │   ├── templates/              # Document templates
    │   ├── docker/                 # 🐳 Local testing environment
-   │   │   ├── docker-compose.yml  # Complete Odoo 18 testing stack
-   │   │   ├── config/             # Optimized configurations
-   │   │   ├── scripts/            # Setup and testing scripts
-   │   │   ├── logs/               # Test reports and logs
-   │   │   └── README.md           # Docker usage guide
-   │   └── agents/
-   │       ├── spec-analyst.md
-   │       ├── spec-architect.md
-   │       ├── spec-developer.md
+   │   └── agents/                 # Sub-agent definitions
+   │       ├── spec-analyst.md     # 🔬 Requirements researcher
+   │       ├── spec-architect.md   # 🏗️ Architecture researcher  
+   │       ├── spec-developer.md   # 💡 Development planner
    │       ├── spec-orchestrator.md
    │       ├── spec-planner.md
    │       ├── spec-progress-tracker.md
@@ -391,19 +421,33 @@ graph TD
    │       ├── spec-story-manager.md
    │       ├── spec-tester.md
    │       ├── spec-validator.md
-   │       ├── docker-manager.md    # 🐳 Docker environment management
-   │       ├── senior-backend-architect.md
-   │       ├── odoo18-backend-architect.md
-   │       ├── odoo-sh-tester.md
-   │       ├── senior-frontend-architect.md
-   │       ├── odoo18-view-generator.md
-   │       ├── odoo18-frontend-architect.md
-   │       ├── ui-ux-master.md
-   │       ├── doc-sharding-agent.md
-   │       ├── git-push-deploy.md
-   │       └── refactor-agent.md
+   │       ├── odoo18-backend-architect.md    # 🏗️ Odoo backend researcher
+   │       ├── odoo18-frontend-architect.md   # 🎨 Odoo frontend researcher
+   │       ├── odoo18-view-generator.md       # 📋 Odoo view researcher
+   │       └── ... (other specialized agents)
+   ├── .context/                   # 🆕 Context management system
+   │   ├── session_context.md      # Current project context
+   │   ├── planning_context.md     # Planning phase context
+   │   ├── development_context.md  # Development phase context
+   │   └── agent_plans/            # Sub-agent research outputs
+   │       ├── requirements_plan.md    # spec-analyst → research output
+   │       ├── architecture_plan.md    # spec-architect → research output
+   │       ├── development_plan.md     # spec-developer → research output
+   │       ├── backend_plan.md         # backend specialist → research output
+   │       ├── frontend_plan.md        # frontend specialist → research output
+   │       └── odoo_plan.md           # Odoo specialist → research output
    ├── CLAUDE.md
    └── ... (your project files)
+   ```
+
+   **🔄 New Workflow with Context System:**
+   ```
+   1. Main Agent receives task
+   2. Main Agent creates/updates .context/session_context.md
+   3. Main Agent delegates research to Sub-agents
+   4. Sub-agents read context and create detailed plans in agent_plans/
+   5. Main Agent reads all plans and implements solutions
+   6. Main Agent updates context with progress
    ```
 
 ## Quick Start

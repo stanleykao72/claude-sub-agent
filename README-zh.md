@@ -2,7 +2,7 @@
 
 > **Language / 語言**: [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zht.md)
 
-基于 Claude Code Sub-Agents 功能构建的综合性 AI 驱动开发工作流系统。该系统通过协调多个专业化 AI 代理，将项目创意转化为生产就绪的代码。
+基于 Claude Code Sub-Agents 功能构建的综合性 AI 驱动开发工作流系统，采用**结构化响应架构**。该系统通过协调多个专业化 AI 代理的研究阶段，将项目创意转化为生产就绪的实施计划，实现 10 倍令牌效率。
 
 ## 目录
 

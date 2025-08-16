@@ -22,7 +22,7 @@ You are the Workflow Orchestrator managing an automated development pipeline usi
 Execute the following enhanced chain using Claude Code's sub-agent syntax with Tech Leader coordination and intelligent parallel execution:
 
 ```
-First use the spec-analyst sub agent to generate complete requirements and user stories for [$ARGUMENTS], then EXECUTE IN PARALLEL: [spec-story-manager sub agent to create comprehensive user stories with acceptance criteria + spec-architect sub agent to design system architecture based on requirements], then use the spec-planner sub agent to create detailed task breakdown with checkbox tracking from both story and architecture outputs, then use the spec-developer sub agent as Tech Leader to assess task complexity and coordinate development through intelligent delegation: [SIMPLE TASKS: implement directly | COMPLEX BACKEND: coordinate with odoo18-backend-architect | COMPLEX FRONTEND: coordinate with odoo18-frontend-architect | STANDARD VIEWS: coordinate with odoo18-view-generator | MIXED REQUIREMENTS: coordinate multi-agent team], then EXECUTE IN PARALLEL: [spec-progress-tracker sub agent to monitor Tech Leader coordination and specialist utilization in real-time], then EXECUTE IN PARALLEL: [spec-tester sub agent to generate comprehensive test suite + spec-reviewer sub agent to perform code review with Tech Leader integration validation], then use the docker-manager sub agent to execute comprehensive local testing in Docker environment for fast validation, then use the spec-validator sub agent to evaluate overall quality including Tech Leader coordination effectiveness, then if score ≥95% proceed to deployment pipeline with git-push-deploy, otherwise loop back to appropriate phase based on progress tracker analysis and repeat with intelligent feedback.
+First setup .context/ directory for structured response coordination, then use the spec-analyst sub agent to research complete requirements and user stories for [$ARGUMENTS], then process structured response into requirements_plan.md, then EXECUTE IN PARALLEL: [spec-story-manager sub agent to research comprehensive user stories with acceptance criteria + spec-architect sub agent to research system architecture based on requirements_plan.md], then process structured responses into stories_plan.md and architecture_plan.md, then use the spec-planner sub agent to research detailed task breakdown with checkbox tracking from both plans, then process structured response into tasks_plan.md, then use the spec-developer sub agent as Tech Leader to research task complexity and coordinate development planning through intelligent delegation: [SIMPLE TASKS: create complete plan directly | COMPLEX BACKEND: coordinate research with odoo18-backend-architect | COMPLEX FRONTEND: coordinate research with odoo18-frontend-architect | STANDARD VIEWS: coordinate research with odoo18-view-generator | MIXED REQUIREMENTS: coordinate multi-agent research team], then process all structured responses into comprehensive development plans, then EXECUTE IN PARALLEL: [spec-progress-tracker sub agent to monitor Tech Leader coordination and planning quality in real-time], then EXECUTE IN PARALLEL: [spec-tester sub agent to research comprehensive test requirements + spec-reviewer sub agent to research code review requirements with Tech Leader integration validation], then process structured responses into test_plan.md and review_plan.md, then use the docker-manager sub agent to execute comprehensive local testing in Docker environment for fast validation, then use the spec-validator sub agent to research overall quality assessment including Tech Leader coordination effectiveness, then process structured response into validation_report.md, then if score ≥95% proceed to deployment pipeline with git-push-deploy, otherwise loop back to appropriate phase based on progress tracker analysis and repeat with intelligent feedback.
 ```
 
 ## Workflow Logic
@@ -73,7 +73,7 @@ graph TD
     I --> I_EVAL{"🧠 Task Complexity<br/>Evaluation"}
     
     %% Tech Leader Decision Tree
-    I_EVAL -->|Simple Tasks| I1[🔧 Direct Implementation]
+    I_EVAL -->|Simple Tasks| I1[🔧 Complete Plan Creation]
     I_EVAL -->|Complex Backend| I2[🏗️ odoo18-backend-architect]
     I_EVAL -->|Complex Frontend| I3[🎨 odoo18-frontend-architect]
     I_EVAL -->|Standard Views| I4[📋 odoo18-view-generator]
@@ -88,7 +88,7 @@ graph TD
     
     %% Parallel Monitoring
     I_MERGE --> I_SPLIT[🔀 Parallel Split Point 2]
-    I_SPLIT -->|Main Thread| I_MAIN[📦 Integrated Implementation]
+    I_SPLIT -->|Main Thread| I_MAIN[📦 Integrated Development Plans]
     I_SPLIT -->|Monitor Thread| I_MONITOR[📊 spec-progress-tracker<br/>Tech Leader Coordination Monitoring]
     
     I_MAIN --> J_SPLIT[🔀 Parallel Split Point 3]
@@ -177,25 +177,28 @@ sequenceDiagram
 
     User->>Orchestrator: Request project development with parallel execution
     
-    Note over Orchestrator: Planning Phase - Intelligent Parallel Approach
+    Note over Orchestrator: Planning Phase - Structured Response Approach
     rect rgb(232, 234, 246)
-        Orchestrator->>Analyst: Generate requirements and initial user stories
-        Analyst-->>Orchestrator: requirements.md, user-stories.md
+        Orchestrator->>Analyst: Research requirements and initial user stories
+        Analyst-->>Orchestrator: === REQUIREMENTS RESEARCH RESULTS START/END ===
+        Note over Orchestrator: 🔧 Parse structured response → requirements_plan.md
         
-        alt requirements.md > 500 lines
-            Orchestrator->>Sharding: Shard requirements document
+        alt requirements_plan.md > 500 lines
+            Orchestrator->>Sharding: Shard requirements plan document
             Sharding-->>Orchestrator: requirements/ directory with sections
             Note over Sharding: ✂️ Document fragmented for better AI processing
         end
         
-        Note over Orchestrator: 🔀 PARALLEL EXECUTION PHASE 1
+        Note over Orchestrator: 🔀 PARALLEL EXECUTION PHASE 1 - Structured Responses
         par Story Management
-            Orchestrator->>StoryMgr: Create comprehensive user stories with lifecycle management
-            StoryMgr-->>Orchestrator: Structured stories with acceptance criteria
-            Note over StoryMgr: 📖 Story creation using BMad-Method principles
+            Orchestrator->>StoryMgr: Research comprehensive user stories with lifecycle management
+            StoryMgr-->>Orchestrator: === STORY RESEARCH RESULTS START/END ===
+            Note over Orchestrator: 🔧 Parse structured response → stories_plan.md
+            Note over StoryMgr: 📖 Story research using BMad-Method principles
         and System Architecture
-            Orchestrator->>Architect: Design system architecture (parallel with stories)
-            Architect-->>Orchestrator: architecture.md, api-spec.md
+            Orchestrator->>Architect: Research system architecture (parallel with stories)
+            Architect-->>Orchestrator: === ARCHITECTURE RESEARCH RESULTS START/END ===
+            Note over Orchestrator: 🔧 Parse structured response → architecture_plan.md
             alt architecture.md > 500 lines
                 Orchestrator->>Sharding: Shard architecture document
                 Sharding-->>Orchestrator: architecture/ directory with components
@@ -203,8 +206,9 @@ sequenceDiagram
             end
         end
         
-        Orchestrator->>Planner: Create task breakdown combining story + architecture outputs
-        Planner-->>Orchestrator: tasks.md with 3-level checkbox hierarchy
+        Orchestrator->>Planner: Research task breakdown combining story + architecture plans
+        Planner-->>Orchestrator: === PLANNING RESEARCH RESULTS START/END ===
+        Note over Orchestrator: 🔧 Parse structured response → tasks_plan.md
         Note over Planner: 📝 Task → Subtask → Action Items with progress tracking
         
         Note over Orchestrator: Quality Gate 1: Planning ≥95%
@@ -220,27 +224,31 @@ sequenceDiagram
         end
     end
     
-    Note over Orchestrator: Development Phase - Parallel Task Execution with Real-time Monitoring
+    Note over Orchestrator: Development Phase - Structured Response with Real-time Monitoring
     rect rgb(243, 229, 245)
         Note over Orchestrator: 🔀 PARALLEL EXECUTION PHASE 2
-        par Implementation
-            Orchestrator->>Developer: Implement code based on story specifications
-            Developer-->>Orchestrator: Implementation with task completion updates
+        par Implementation Research & Planning
+            Orchestrator->>Developer: Research implementation approach based on tasks plan
+            Developer-->>Orchestrator: === DEVELOPMENT RESEARCH RESULTS START/END ===
+            Note over Orchestrator: 🔧 Parse structured response → development_plan.md
+            Note over Orchestrator: 📋 All development plans created and ready for external implementation
         and Real-time Monitoring
-            Orchestrator->>ProgressTracker: Monitor implementation progress in real-time
+            Orchestrator->>ProgressTracker: Monitor development planning progress in real-time
             loop Continuous Monitoring
                 ProgressTracker-->>Orchestrator: Progress dashboards, velocity metrics, risk alerts
                 Note over ProgressTracker: 📊 Real-time checkbox completion tracking
             end
         end
         
-        Note over Orchestrator: 🔀 PARALLEL EXECUTION PHASE 3
-        par Test Generation
-            Orchestrator->>Tester: Generate comprehensive test suite
-            Tester-->>Orchestrator: Tests with story acceptance criteria validation
-        and Code Review
-            Orchestrator->>Reviewer: Perform code review with story alignment validation
-            Reviewer-->>Orchestrator: Review report with story acceptance criteria check
+        Note over Orchestrator: 🔀 PARALLEL EXECUTION PHASE 3 - Structured Responses
+        par Test Generation Research
+            Orchestrator->>Tester: Research comprehensive test suite requirements
+            Tester-->>Orchestrator: === TESTING RESEARCH RESULTS START/END ===
+            Note over Orchestrator: 🔧 Parse structured response → test_plan.md
+        and Code Review Research
+            Orchestrator->>Reviewer: Research code review requirements with story alignment
+            Reviewer-->>Orchestrator: === REVIEW RESEARCH RESULTS START/END ===
+            Note over Orchestrator: 🔧 Parse structured response → review_plan.md
         end
         
         Note over Orchestrator: Quality Gate 2: Development ≥80%
@@ -250,7 +258,7 @@ sequenceDiagram
             Note over Orchestrator: ❌ Intelligent feedback routing
             Orchestrator->>ProgressTracker: Analyze failure points and recommend fixes
             alt Code Quality Issues
-                Orchestrator->>Developer: Apply feedback and continue implementation
+                Orchestrator->>Developer: Apply feedback and continue development planning
             else Testing Issues
                 Orchestrator->>Tester: Improve test coverage
             else Review Issues
@@ -259,10 +267,12 @@ sequenceDiagram
         end
     end
     
-    Note over Orchestrator: Validation Phase - Final Quality Assessment
+    Note over Orchestrator: Validation Phase - Final Quality Assessment with Structured Response
     rect rgb(248, 249, 250)
-        Orchestrator->>Validator: Final production readiness and story completion check
-        Validator-->>Orchestrator: Quality score (0-100%) with comprehensive validation
+        Orchestrator->>Validator: Research final production readiness and story completion
+        Validator-->>Orchestrator: === VALIDATION RESEARCH RESULTS START/END ===
+        Note over Orchestrator: 🔧 Parse structured response → validation_report.md
+        Note over Orchestrator: 📋 Extract quality score (0-100%) from validation report
         
         Note over Orchestrator: Quality Gate 3: Production Ready ≥85%
         alt Production Quality ≥ 85%
@@ -284,7 +294,7 @@ sequenceDiagram
             else Planning Issues Identified
                 Orchestrator->>Planner: Fix task breakdown issues
             else Development Issues Identified
-                Orchestrator->>Developer: Fix implementation issues
+                Orchestrator->>Developer: Fix development planning issues
             else Testing Issues Identified
                 Orchestrator->>Tester: Improve test coverage
             else Review Issues Identified
@@ -328,11 +338,11 @@ sequenceDiagram
 4. **Document Sharding Check (Post-Architecture)**:
    - **Auto-check**: If architecture.md > 500 lines, invoke doc-sharding-agent  
    - **Output**: Sharded architecture/ directory with component sections
-   - **Benefits**: Focused architectural components for implementation
+   - **Benefits**: Focused architectural components for development planning
 
 5. **spec-planner sub agent**: Create detailed task breakdown with checkbox tracking and test planning
    - **Input**: Combined outputs from spec-story-manager + spec-architect
-   - Break stories into implementable tasks (2-8 hours each)
+   - Break stories into plannable tasks (2-8 hours each for implementation)
    - Create 3-level checkbox hierarchy (Task → Subtask → Action Items)
    - Map tasks directly to acceptance criteria for traceability
    - **Mandatory Test Mapping**: Each task must have corresponding test specification
@@ -350,15 +360,15 @@ sequenceDiagram
 7. **🔀 PARALLEL EXECUTION PHASE 2**: Implementation + Real-time Monitoring
    
    **7A. spec-developer sub agent** (Tech Leader Coordination Thread):
-   - **Task Complexity Assessment**: Evaluate each task and determine appropriate implementation approach
+   - **Task Complexity Assessment**: Evaluate each task and determine appropriate planning approach
    - **Strategic Agent Coordination**: Intelligent delegation to specialist agents based on complexity
-     - Simple tasks: Direct implementation by spec-developer
+     - Simple tasks: Complete planning by spec-developer
      - Complex backend: Delegate to odoo18-backend-architect
      - Complex frontend: Delegate to odoo18-frontend-architect  
      - Standard views: Delegate to odoo18-view-generator
      - Mixed requirements: Coordinate multi-agent team
    - **Quality Integration**: Consolidate specialist outputs into cohesive solution
-   - **Task-by-Task Implementation**: Each checkbox task implemented through optimal agent
+   - **Task-by-Task Planning**: Each checkbox task planned through optimal agent
    - Task completion tracking with checkbox updates (only after task tests pass)
    - **Cross-Agent Integration**: Ensure compatibility between specialist outputs
    - Security implementation coordination across all components
@@ -738,7 +748,7 @@ odoo18ee_project/
 2. **Phase 2 Tech Leader Coordination**: Intelligent task delegation and monitoring
    ```
    spec-developer (Tech Leader Assessment) → {
-     Simple Tasks: Direct Implementation
+     Simple Tasks: Complete Plan Creation
      Complex Backend: odoo18-backend-architect
      Complex Frontend: odoo18-frontend-architect  
      Standard Views: odoo18-view-generator

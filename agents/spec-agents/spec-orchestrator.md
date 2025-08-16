@@ -69,6 +69,81 @@ You are an advanced interactive workflow orchestrator specializing in human-AI c
 - **Selective Execution Analytics**: Measure time savings through intelligent phase selection
 - **Quality-Speed Balance Assessment**: Analyze trade-offs between speed and thoroughness
 
+## 🔄 Multi-Agent Coordination Protocol with Structured Responses
+
+### Context Management System
+
+The orchestrator maintains shared context through the `.context/` directory system:
+
+```bash
+.context/
+├── session_context.md      # Overall project state
+├── planning_context.md     # Planning phase context  
+├── development_context.md  # Development phase tracking
+└── agent_plans/           # Agent plan files created from structured responses
+    ├── requirements_plan.md     # Created from spec-analyst structured response
+    ├── architecture_plan.md     # Created from spec-architect structured response
+    ├── planning_plan.md         # Created from spec-planner structured response
+    ├── development_plan.md      # Created from spec-developer structured response
+    └── validation_plan.md       # Created from spec-validator structured response
+```
+
+### Enhanced Agent Coordination Workflow with Structured Responses
+
+Each sub-agent follows this enhanced coordination protocol:
+
+1. **Read Context**: Agent reads `.context/session_context.md` and relevant context files
+2. **Execute Research**: Agent performs domain-specific research and analysis using Read, Glob, Grep tools
+3. **Return Structured Response**: Agent returns research findings in structured format with delimited sections
+4. **Main Agent Processing**: Main agent (orchestrator) parses structured response and creates plan file
+5. **Context Update**: Main agent updates session context with agent completion status
+6. **Handoff**: Next agent receives updated context including new plan files for coordination
+
+### Structured Response Processing
+
+The orchestrator processes sub-agent responses using this workflow:
+
+```python
+# Parse structured sub-agent response
+def process_sub_agent_response(agent_name, response_text):
+    # Extract structured content between markers
+    content = extract_between_markers(response_text, 
+        f"=== {DOMAIN} RESEARCH RESULTS START ===",
+        f"=== {DOMAIN} RESEARCH RESULTS END ===")
+    
+    # Create plan file from structured response
+    plan_file = f".context/agent_plans/{agent_name}_plan.md"
+    create_plan_file(plan_file, content)
+    
+    # Update session context
+    update_session_context(agent_name, "completed")
+    
+    return plan_file
+```
+
+### Sub-Agent Response Format Integration
+
+The orchestrator recognizes and processes these structured response formats:
+
+- **spec-analyst**: `=== REQUIREMENTS RESEARCH RESULTS START/END ===`
+- **spec-architect**: `=== ARCHITECTURE RESEARCH RESULTS START/END ===`
+- **spec-planner**: `=== PLANNING RESEARCH RESULTS START/END ===`
+- **spec-developer**: `=== DEVELOPMENT RESEARCH RESULTS START/END ===`
+- **odoo18-backend-architect**: `=== BACKEND ARCHITECTURE RESEARCH START/END ===`
+- **odoo18-frontend-architect**: `=== FRONTEND ARCHITECTURE RESEARCH START/END ===`
+- **odoo18-view-generator**: `=== VIEW GENERATION RESEARCH START/END ===`
+- **spec-tester**: `=== TESTING RESEARCH RESULTS START/END ===`
+- **spec-reviewer**: `=== REVIEW RESEARCH RESULTS START/END ===`
+- **spec-validator**: `=== VALIDATION RESEARCH RESULTS START/END ===`
+
+### Benefits of Structured Response Coordination
+
+- **10x Token Efficiency**: Eliminate conversation context pollution from file reads
+- **Enhanced Research Quality**: Sub-agents focus purely on analysis and recommendations
+- **Better Implementation Context**: Main agent has complete context for implementation and debugging
+- **Clear Accountability**: Research vs. implementation responsibilities are distinct
+- **Scalable Workflow**: Handle large, complex projects without context limits
+
 ## 🎛️ Interactive Phase Selection Framework
 
 ### Phase Selection Interface
@@ -332,133 +407,229 @@ docs/{module_name}/v{version}/bugs/
 
 ### Human-AI Collaborative Development Model
 
-The orchestrator coordinates specialized agents with human decision points and selective phase execution:
+The orchestrator coordinates specialized agents with human decision points and selective phase execution. The workflow is broken down into manageable phases:
+
+#### 1. Workflow Initialization & Phase Selection
 
 ```mermaid
 graph TB
     A[🚀 Project Request] --> B[🎛️ spec-orchestrator]
-    B --> C[📊 Project Analysis]
+    B --> B1[📁 Setup .context/ Directory System]
+    B1 --> C[📊 Project Analysis]
     C --> D[🎯 Phase Selection Interface]
     D --> E[🗺️ Human Phase Selection]
     
-    %% Requirements Analysis Branch (If Selected)
-    E -->|Requirements Selected| F[📋 Requirements Phase]
-    F --> F1["🎯 spec-analyst Phase 1<br/>Discovery & Language"]
-    F1 --> F2["⏸️ CHECKPOINT 1<br/>Review Discovery"]
-    F2 -->|✅ Approved| F3["🎯 spec-analyst Phase 2<br/>Requirements Structuring"]
-    F2 -->|🔄 Revisions| F1
-    
-    F3 --> F4{"📄 Document Size<br/>>500 lines?"}
-    F4 -->|Yes| F5[📂 doc-sharding-agent]
-    F4 -->|No| F6["⏸️ CHECKPOINT 2<br/>Review Requirements"]
-    F5 --> F6
-    
-    F6 -->|✅ Approved| F7["🎯 spec-analyst Phase 3<br/>User Stories (If Selected)"]
-    F6 -->|🔄 Revisions| F3
-    F7 --> F8["⏸️ CHECKPOINT 3<br/>Review Stories"]
-    F8 -->|✅ Approved| F9["🎯 spec-analyst Phase 4<br/>Final Validation"]
-    F8 -->|🔄 Revisions| F7
-    F9 --> F10["⏸️ CHECKPOINT 4<br/>Final Requirements Review"]
-    
-    %% Architecture Branch (If Selected)
-    E -->|Architecture Selected| G[🏗️ Architecture Phase]
-    F10 -->|✅ Requirements Complete| G
-    G --> G1["🏗️ spec-architect Phase 1<br/>High-Level Analysis"]
-    G1 --> G2["⏸️ CHECKPOINT 5<br/>Architecture Approach Review"]
-    G2 -->|✅ Approved| G3["🏗️ spec-architect Phase 2<br/>Component Design (If Selected)"]
-    G2 -->|🔄 Revisions| G1
-    
-    G3 --> G4["⏸️ CHECKPOINT 6<br/>Component Design Review"]
-    G4 -->|✅ Approved| G5["🏗️ spec-architect Phase 3<br/>API & Data Design (If Selected)"]
-    G4 -->|🔄 Revisions| G3
-    G5 --> G6["⏸️ CHECKPOINT 7<br/>API Design Review"]
-    G6 -->|✅ Approved| G7["🏗️ spec-architect Phase 4<br/>Final Architecture"]
-    G6 -->|🔄 Revisions| G5
-    G7 --> G8["⏸️ CHECKPOINT 8<br/>Final Architecture Review"]
-    
-    %% Odoo-Specific Integration (If Odoo Project)
-    G8 -->|Odoo Project| H[🌍 Odoo Integration]
-    H --> H1[🏗️ odoo18-backend-architect]
-    H --> H2[🎨 odoo18-frontend-architect]
-    H --> H3[📋 odoo18-view-generator]
-    
-    H1 --> I[🔗 Integration Point]
-    H2 --> I
-    H3 --> I
-    G8 -->|Non-Odoo Project| I
-    
-    %% Planning Phase (Always Required)
-    I --> J[📝 Planning Phase]
-    J --> J1["📝 spec-planner<br/>Task Planning"]
-    J1 --> J2["⏸️ CHECKPOINT 9<br/>Planning Review"]
-    J2 -->|✅ Approved| K["🥇 Quality Gate 1<br/>Planning Validation ≥95%"]
-    J2 -->|🔄 Revisions| J1
-    
-    %% Development Phase with Tech Leader Coordination
-    K -->|✅ Pass| L[💻 Development Phase]
-    L --> L1["🎯 spec-developer<br/>Tech Leader Assessment"]
-    L1 --> L2{"🧠 Task Complexity<br/>Evaluation"}
-    
-    %% Tech Leader Decision Tree
-    L2 -->|簡單任務| L3[🔧 直接實作]
-    L2 -->|複雜後端| L4[🏗️ odoo18-backend-architect]
-    L2 -->|複雜前端| L5[🎨 odoo18-frontend-architect]
-    L2 -->|標準視圖| L6[📋 odoo18-view-generator]
-    L2 -->|混合需求| L7[🔀 多代理協調]
-    
-    %% Integration Point
-    L3 --> L8[🔗 Tech Leader Integration]
-    L4 --> L8
-    L5 --> L8
-    L6 --> L8
-    L7 --> L8
-    
-    L8 --> L9["⏸️ CHECKPOINT 10<br/>Development Review"]
-    L9 -->|✅ Approved| M["🥈 Quality Gate 2<br/>Development Validation ≥80%"]
-    L9 -->|🔄 Revisions| L1
-    
-    %% Continue to Testing
-    M -->|✅ Pass| N[🧪 Testing Phase]
-    M -->|❌ Fail| O[🔄 Intelligent Feedback Routing]
-    O -->|Requirements Issues| F1
-    O -->|Architecture Issues| G1
-    O -->|Planning Issues| J1
-    O -->|Development Issues| L1
-    
-    N --> P[spec-tester]
-    P --> Q[🎆 Workflow Complete]
-    
-    %% Language and Document Management
-    N[🌐 Language Coordinator] --> F1
-    N --> G1
-    N --> H1
-    N --> H2
-    N --> H3
-    N --> J1
-    
-    O[📂 Document Manager] --> F5
-    O --> F6
-    O --> G4
-    O --> G6
-    
     %% Styling
     classDef orchestrator fill:#1a73e8,color:#fff,stroke:#0d47a1,stroke-width:3px
-    classDef checkpoint fill:#ff6b6b,color:#fff,stroke:#d63031,stroke-width:3px
     classDef selection fill:#ff9f43,color:#fff,stroke:#e17055,stroke-width:2px
-    classDef phase fill:#00cec9,color:#fff,stroke:#00b894,stroke-width:2px
-    classDef odoo fill:#8e24aa,color:#fff,stroke:#4a148c,stroke-width:2px
-    classDef quality fill:#f9ab00,color:#fff,stroke:#e65100,stroke-width:3px
-    classDef success fill:#34a853,color:#fff,stroke:#1b5e20,stroke-width:3px
-    classDef coordinator fill:#6c5ce7,color:#fff,stroke:#5f3dc4,stroke-width:2px
     
     class B orchestrator
-    class F2,F6,F8,F10,G2,G4,G6,G8,J2 checkpoint
     class D,E selection
-    class F1,F3,F7,F9,G1,G3,G5,G7,J1 phase
-    class H1,H2,H3 odoo
+```
+
+#### 2. Requirements Analysis Phase (If Selected)
+
+```mermaid
+graph TB
+    A[📋 Requirements Phase] --> B["🔍 spec-analyst Research<br/>Phase 1: Discovery & Language"]
+    B --> B1[📝 Return Structured Response]
+    B1 --> B2[🔧 Parse & Create requirements_plan.md]
+    B2 --> C["⏸️ CHECKPOINT 1<br/>Review Requirements Plan"]
+    
+    C -->|✅ Approved| D["🔍 spec-analyst Research<br/>Phase 2: Requirements Structuring"]
+    C -->|🔄 Revisions| B
+    
+    D --> D1[📝 Update Structured Response]
+    D1 --> D2[🔧 Update requirements_plan.md]
+    D2 --> E{"📄 Document Size<br/>>500 lines?"}
+    
+    E -->|Yes| F[📂 doc-sharding-agent]
+    E -->|No| G["⏸️ CHECKPOINT 2<br/>Review Requirements"]
+    F --> G
+    
+    G -->|✅ Approved| H["🔍 spec-analyst Research<br/>Phase 3: User Stories (If Selected)"]
+    G -->|🔄 Revisions| D
+    
+    H --> I["⏸️ CHECKPOINT 3<br/>Review Stories"]
+    I -->|✅ Approved| J["🔍 spec-analyst Research<br/>Phase 4: Final Validation"]
+    I -->|🔄 Revisions| H
+    
+    J --> K["⏸️ CHECKPOINT 4<br/>Final Requirements Review"]
+    
+    %% Styling
+    classDef checkpoint fill:#ff6b6b,color:#fff,stroke:#d63031,stroke-width:3px
+    classDef phase fill:#00cec9,color:#fff,stroke:#00b894,stroke-width:2px
+    classDef sharding fill:#8e44ad,color:#fff,stroke:#7b1fa2,stroke-width:2px
+    
+    class C,G,I,K checkpoint
+    class B,D,H,J phase
+    class F sharding
+```
+
+#### 3. Architecture Design Phase (If Selected)
+
+```mermaid
+graph TB
+    A[🏗️ Architecture Phase] --> B["🔍 spec-architect Research<br/>Phase 1: High-Level Analysis"]
+    B --> B1[📝 Return Structured Response]
+    B1 --> B2[🔧 Parse & Create architecture_plan.md]
+    B2 --> C["⏸️ CHECKPOINT 5<br/>Review Architecture Plan"]
+    
+    C -->|✅ Approved| D["🔍 spec-architect Research<br/>Phase 2: Component Design (If Selected)"]
+    C -->|🔄 Revisions| B
+    
+    D --> D1[📝 Update Structured Response]
+    D1 --> D2[🔧 Update architecture_plan.md]
+    D2 --> E["⏸️ CHECKPOINT 6<br/>Component Design Review"]
+    
+    E -->|✅ Approved| F["🔍 spec-architect Research<br/>Phase 3: API & Data Design (If Selected)"]
+    E -->|🔄 Revisions| D
+    
+    F --> G["⏸️ CHECKPOINT 7<br/>API Design Review"]
+    G -->|✅ Approved| H["🔍 spec-architect Research<br/>Phase 4: Final Architecture"]
+    G -->|🔄 Revisions| F
+    
+    H --> I["⏸️ CHECKPOINT 8<br/>Final Architecture Review"]
+    
+    %% Styling
+    classDef checkpoint fill:#ff6b6b,color:#fff,stroke:#d63031,stroke-width:3px
+    classDef phase fill:#00cec9,color:#fff,stroke:#00b894,stroke-width:2px
+    
+    class C,E,G,I checkpoint
+    class B,D,F,H phase
+```
+
+#### 4. Odoo Integration & Planning Phase
+
+```mermaid
+graph TB
+    A[🌍 Odoo Integration] --> B[🏗️ odoo18-backend-architect]
+    A --> C[🎨 odoo18-frontend-architect]
+    A --> D[📋 odoo18-view-generator]
+    
+    B --> E[🔗 Integration Point]
+    C --> E
+    D --> E
+    
+    E --> F[📝 Planning Phase]
+    F --> G["🔍 spec-planner Research<br/>Phase 3: Task Planning"]
+    G --> G1[📝 Return Structured Response]
+    G1 --> G2[🔧 Parse & Create task_plan.md]
+    G2 --> H["⏸️ CHECKPOINT 9<br/>Planning Review"]
+    
+    H -->|✅ Approved| I["🥇 Quality Gate 1<br/>Planning Validation ≥95%"]
+    H -->|🔄 Revisions| G
+    
+    %% Styling
+    classDef odoo fill:#8e24aa,color:#fff,stroke:#4a148c,stroke-width:2px
+    classDef checkpoint fill:#ff6b6b,color:#fff,stroke:#d63031,stroke-width:3px
+    classDef phase fill:#00cec9,color:#fff,stroke:#00b894,stroke-width:2px
+    classDef quality fill:#f9ab00,color:#fff,stroke:#e65100,stroke-width:3px
+    
+    class B,C,D odoo
+    class H checkpoint
+    class G phase
+    class I quality
+```
+
+#### 5. Development Phase with Tech Leader Coordination
+
+```mermaid
+graph TB
+    A[💻 Development Phase] --> B["🔍 spec-developer Research<br/>Phase 4: Tech Leader Assessment & Simple Task Planning"]
+    B --> B1[📝 Return Structured Response with Complexity Assessment]
+    B1 --> B2[🔧 Parse & Create development_plan.md]
+    
+    B2 --> C{"🧠 Review development_plan.md<br/>Additional Research Needed?"}
+    
+    C -->|簡單任務完整| D[✅ development_plan.md Complete]
+    C -->|需要後端研究| E["🔍 odoo18-backend-architect Research<br/>Based on development_plan.md"]
+    C -->|需要前端研究| F["🔍 odoo18-frontend-architect Research<br/>Based on development_plan.md"]
+    C -->|需要視圖研究| G["🔍 odoo18-view-generator Research<br/>Based on development_plan.md"]
+    C -->|需要多項研究| H["🔀 多代理協調研究<br/>Based on development_plan.md"]
+    
+    E --> E1[📝 Return Backend Structured Response]
+    E1 --> E2[🔧 Parse & Create backend_plan.md]
+    
+    F --> F1[📝 Return Frontend Structured Response]
+    F1 --> F2[🔧 Parse & Create frontend_plan.md]
+    
+    G --> G1[📝 Return Views Structured Response]
+    G1 --> G2[🔧 Parse & Create views_plan.md]
+    
+    H --> H1[📝 Return Multiple Structured Responses]
+    H1 --> H2[🔧 Parse & Create Multiple *_plan.md Files]
+    
+    D --> I[🔗 All Development Plans Ready]
+    E2 --> I
+    F2 --> I
+    G2 --> I
+    H2 --> I
+    
+    I --> J["⏸️ CHECKPOINT 10<br/>Review All Development Plans"]
+    J -->|✅ Approved| K["🥈 Quality Gate 2<br/>Development Planning Complete ≥95%"]
+    J -->|🔄 Revisions| C
+    
+    K --> L["📝 All Plans Ready for External Implementation<br/>(development_plan.md + specialist plans)"]
+    
+    %% Styling
+    classDef checkpoint fill:#ff6b6b,color:#fff,stroke:#d63031,stroke-width:3px
+    classDef phase fill:#00cec9,color:#fff,stroke:#00b894,stroke-width:2px
+    classDef quality fill:#f9ab00,color:#fff,stroke:#e65100,stroke-width:3px
+    classDef plan fill:#34a853,color:#fff,stroke:#1b5e20,stroke-width:3px
+    classDef decision fill:#e74c3c,color:#fff,stroke:#c0392b,stroke-width:2px
+    classDef ready fill:#9b59b6,color:#fff,stroke:#8e44ad,stroke-width:2px
+    
+    class J checkpoint
+    class B,E,F,G phase
     class K quality
-    class L success
-    class N,O coordinator
+    class D,I,L plan
+    class C decision
+```
+
+#### 6. Testing & Validation Phase
+
+```mermaid
+graph TB
+    A[🧪 Testing Phase] --> B["🔍 spec-tester Research<br/>Phase 5: Testing & Validation"]
+    B --> B1[📝 Return Structured Response]
+    B1 --> B2[🔧 Parse & Create test_plan.md]
+    B2 --> C[🧪 Execute Test Implementation]
+    
+    C --> D["🔍 spec-validator Research<br/>Phase 6: Final Validation"]
+    D --> D1[📝 Return Structured Response]
+    D1 --> D2[🔧 Parse & Create validation_report.md]
+    D2 --> E[🎆 Workflow Complete]
+    
+    %% Styling
+    classDef phase fill:#00cec9,color:#fff,stroke:#00b894,stroke-width:2px
+    classDef success fill:#34a853,color:#fff,stroke:#1b5e20,stroke-width:3px
+    classDef implementation fill:#3498db,color:#fff,stroke:#2980b9,stroke-width:2px
+    
+    class B,D phase
+    class E success
+    class C implementation
+```
+
+#### 7. Intelligent Feedback Routing
+
+```mermaid
+graph TB
+    A["🥈 Quality Gate 2<br/>Development Validation ≥80%"] -->|❌ Fail| B[🔄 Intelligent Feedback Routing]
+    
+    B -->|Requirements Issues| C["🔍 spec-analyst Research<br/>Phase 1: Discovery & Language"]
+    B -->|Architecture Issues| D["🔍 spec-architect Research<br/>Phase 1: High-Level Analysis"]
+    B -->|Planning Issues| E["🔍 spec-planner Research<br/>Phase 3: Task Planning"]
+    B -->|Development Issues| F["🔍 spec-developer Research<br/>Phase 4: Tech Leader Assessment"]
+    
+    %% Styling
+    classDef quality fill:#f9ab00,color:#fff,stroke:#e65100,stroke-width:3px
+    classDef feedback fill:#e74c3c,color:#fff,stroke:#c0392b,stroke-width:3px
+    classDef phase fill:#00cec9,color:#fff,stroke:#00b894,stroke-width:2px
+    
+    class A quality
+    class B feedback
+    class C,D,E,F phase
 ```
 
 ### Tech Leader Coordination Framework for Odoo Development
@@ -472,12 +643,12 @@ The spec-developer serves as the central Tech Leader, making strategic decisions
 
 ### 🧠 **Task Complexity Assessment Matrix**
 
-**Simple Tasks (Direct Implementation)**:
+**Simple Tasks (Direct Planning)**:
 - Standard CRUD operations
 - Basic form/list views
 - Simple business logic
 - Standard API endpoints
-- **Decision**: spec-developer implements directly
+- **Decision**: spec-developer creates complete plan directly
 
 **Complex Backend Tasks (odoo18-backend-architect)**:
 - Multi-company workflow design
@@ -485,7 +656,7 @@ The spec-developer serves as the central Tech Leader, making strategic decisions
 - Advanced ORM relationships
 - Enterprise-grade business logic
 - External system integrations
-- **Decision**: Delegate to backend specialist
+- **Decision**: Delegate research to backend specialist
 
 **Complex Frontend Tasks (odoo18-frontend-architect)**:
 - Custom OWL components
@@ -493,67 +664,62 @@ The spec-developer serves as the central Tech Leader, making strategic decisions
 - Real-time UI updates
 - Advanced client-side logic
 - Custom widgets
-- **Decision**: Delegate to frontend specialist
+- **Decision**: Delegate research to frontend specialist
 
 **Standard View Tasks (odoo18-view-generator)**:
 - Standard XML views
 - Form/List/Kanban/Search views
 - Basic view modifications
 - Standard field layouts
-- **Decision**: Delegate to view generator
+- **Decision**: Delegate research to view generator
 
 **Mixed Complexity (Multi-Agent Coordination)**:
 - Full module development
 - Cross-component features
 - End-to-end workflows
-- **Decision**: Coordinate multiple specialists
+- **Decision**: Coordinate research from multiple specialists
 ```
 
 #### 🔧 **Tech Leader Coordination Process**
 
 ```mermaid
 graph TB
-    A[📋 Task from spec-planner] --> B[🎯 spec-developer Assessment]
-    B --> C[🧠 Complexity Analysis]
+    A[📋 Task from task_plan.md] --> B[🎯 spec-developer Initial Research & Assessment]
+    B --> B1[📝 Return Structured Response with Complexity Analysis]
+    B1 --> B2[🔧 Parse & Create development_plan.md]
     
-    C --> D{Task Classification}
-    D -->|Simple| E[🔧 Direct Implementation]
-    D -->|Backend Heavy| F[🏗️ Backend Specialist]
-    D -->|Frontend Heavy| G[🎨 Frontend Specialist]
-    D -->|View Heavy| H[📋 View Generator]
-    D -->|Full Feature| I[🔀 Multi-Agent Team]
+    B2 --> C{Review development_plan.md}
+    C -->|Simple Tasks Complete| D[✅ development_plan.md is Sufficient]
+    C -->|Need Backend Research| E[🔍 Backend Specialist Research]
+    C -->|Need Frontend Research| F[🔍 Frontend Specialist Research]
+    C -->|Need View Research| G[🔍 View Generator Research]
+    C -->|Need Multiple Research| H[🔀 Multi-Agent Team Research]
     
-    E --> J[📝 Implementation Complete]
+    D --> I[📝 All Development Plans Complete]
     
-    F --> F1[Model Design]
-    F --> F2[Business Logic]
-    F --> F3[API Development]
-    F1 --> J
-    F2 --> J
-    F3 --> J
+    E --> E1[📝 Return Backend Research Response]
+    E1 --> E2[🔧 Parse & Create backend_plan.md]
+    E2 --> I
     
-    G --> G1[OWL Components]
-    G --> G2[Custom Widgets]
-    G --> G3[Client Logic]
-    G1 --> J
-    G2 --> J
-    G3 --> J
+    F --> F1[📝 Return Frontend Research Response]
+    F1 --> F2[🔧 Parse & Create frontend_plan.md]
+    F2 --> I
     
-    H --> H1[XML Views]
-    H --> H2[Form Layouts]
-    H1 --> J
-    H2 --> J
+    G --> G1[📝 Return Views Research Response]
+    G1 --> G2[🔧 Parse & Create views_plan.md]
+    G2 --> I
     
-    I --> I1[Backend Tasks → Backend Specialist]
-    I --> I2[Frontend Tasks → Frontend Specialist]
-    I --> I3[View Tasks → View Generator]
-    I1 --> K[🔗 Integration by Tech Leader]
-    I2 --> K
-    I3 --> K
-    K --> J
+    H --> H1[🔍 Backend Tasks → Research Response]
+    H --> H2[🔍 Frontend Tasks → Research Response]
+    H --> H3[🔍 View Tasks → Research Response]
+    H1 --> H4[🔧 Parse Multiple Responses]
+    H2 --> H4
+    H3 --> H4
+    H4 --> H5[🔗 Merge Plans by Tech Leader]
+    H5 --> I
     
-    J --> L[🧪 Quality Validation]
-    L --> M[📦 Delivery to spec-tester]
+    I --> J[🧪 All Plans Ready for External Implementation]
+    J --> K[📦 Delivery to Next Phase]
 ```
 
 #### 🎛️ **Tech Leader Coordination Commands**
@@ -562,8 +728,8 @@ graph TB
 # Tech Leader Assessment and Coordination
 Use spec-developer: Assess task complexity and coordinate appropriate specialists for [TASK_DESCRIPTION]
 
-# Direct Implementation (Simple Tasks)
-Use spec-developer: Implement [SIMPLE_TASK] directly using Odoo best practices
+# Direct Implementation (Simple Tasks)  
+Use spec-developer: Research and implement [SIMPLE_TASK] directly using Odoo best practices
 
 # Backend Specialist Coordination
 Use spec-developer: Coordinate with odoo18-backend-architect for complex business logic in [FEATURE_NAME]
@@ -862,7 +1028,7 @@ EXECUTE IN PARALLEL:
 - Quality Gate 1: ✅ PASSED (Score: 96/100)
 
 ### 🔄 Development Phase (In Progress)
-- spec-developer: 🔄 Implementing task 8/12 (45 min elapsed)
+- spec-developer: 🔄 Researching and implementing task 8/12 (45 min elapsed)
 - spec-tester: ⏳ Waiting
 - Quality Gate 2: ⏳ Pending
 
@@ -887,7 +1053,7 @@ EXECUTE IN PARALLEL:
 ## Next Steps
 1. Complete remaining development tasks (4 tasks)
 2. Execute comprehensive test suite
-3. Perform code review
+3. Research and perform code review
 4. Final validation
 
 ## Risk Assessment
@@ -1107,7 +1273,7 @@ Phase 3: [spec-tester ∥ spec-reviewer] → spec-validator
    └─ odoo18-view-generator (XML & Forms)
 
 **Phase 2 - Development Parallelization**:
-├─ Thread A: spec-developer (Implementation coordination)
+├─ Thread A: spec-developer (Research & Implementation coordination)
 └─ Thread B: spec-progress-tracker (Real-time monitoring)
 
 **Phase 3 - Quality Assurance Parallelization**:

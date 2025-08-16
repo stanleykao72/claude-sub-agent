@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Claude Sub-Agent Spec Workflow System - A comprehensive AI-driven development workflow system built on Claude Code's Sub-Agents feature. This system transforms project ideas into production-ready code through specialized AI agents working in coordinated phases.
+Claude Sub-Agent Spec Workflow System - A comprehensive AI-driven development workflow system built on Claude Code's Sub-Agents feature with **Structured Response Architecture**. This system transforms project ideas into production-ready implementation plans through specialized AI agents working in coordinated research phases with 10x token efficiency.
 
 ## Project Documentation Conventions (Important)
 
@@ -23,26 +23,26 @@ Claude Sub-Agent Spec Workflow System - A comprehensive AI-driven development wo
 ### Workflow Execution
 
 ```bash
-# Execute complete development workflow with Tech Leader coordination
+# Execute complete structured response workflow with Tech Leader coordination
 /agent-workflow "Create an Odoo inventory management module with barcode scanning"
 
-# Start workflow manually with orchestrator (includes Tech Leader coordination)
-Use spec-orchestrator: Create an enterprise Odoo CRM extension with multi-tenancy support
+# Start workflow manually with orchestrator (includes structured response coordination)
+Use spec-orchestrator: Research and plan enterprise Odoo CRM extension with multi-tenancy support
 
-# Phase-specific execution (Tech Leader automatically coordinates specialists)
-Use spec-analyst: Analyze requirements for an Odoo e-commerce integration
-Use spec-architect: Design system architecture for Odoo microservices
-Use spec-developer: Assess complexity and coordinate implementation for user authentication
+# Phase-specific research execution (returns structured responses for plan creation)
+Use spec-analyst: Research requirements for an Odoo e-commerce integration
+Use spec-architect: Research system architecture for Odoo microservices
+Use spec-developer: Research task complexity and coordinate development planning for user authentication
 
-# Direct specialist usage (outside workflow - for isolated tasks only)
-Use odoo18-backend-architect: Design complex multi-company workflow for existing module
-Use odoo18-frontend-architect: Create advanced dashboard widget for specific requirement
-Use odoo18-view-generator: Generate standard views for new model
+# Direct specialist research (outside workflow - for isolated research only)
+Use odoo18-backend-architect: Research complex multi-company workflow for existing module
+Use odoo18-frontend-architect: Research advanced dashboard widget for specific requirement
+Use odoo18-view-generator: Research standard views for new model
 
-# Tech Leader coordination examples
-Use spec-developer: Implement complete Odoo module with intelligent agent delegation
-Use spec-developer: Assess task complexity and coordinate appropriate specialists for [FEATURE]
-Use spec-developer: Integrate specialist outputs for cohesive Odoo module delivery
+# Tech Leader coordination examples (structured response approach)
+Use spec-developer: Research complete Odoo module with intelligent agent delegation
+Use spec-developer: Research task complexity and coordinate appropriate specialists for [FEATURE]
+Use spec-developer: Research and integrate specialist outputs for cohesive Odoo module planning
 ```
 
 ### Story Management and Progress Tracking
@@ -108,29 +108,30 @@ cp commands/agent-workflow.md .claude/commands/
 # Utility agents: agents/utility/
 ```
 
-## System Architecture
+## System Architecture with Structured Response Design
 
-### Multi-Phase Workflow Design
+### Multi-Phase Research & Planning Workflow
 
-The system follows a three-phase approach with quality gates:
+The system follows a three-phase structured response approach with quality gates:
 
-1. **Planning Phase (20-25% of project time)**
-   - spec-analyst: Requirements analysis and initial user stories
-   - spec-story-manager: Comprehensive story creation with BMad-Method principles
-   - spec-architect: System architecture and API design
-   - spec-planner: Task breakdown with 3-level checkbox tracking
-   - Quality Gate 1: 95% compliance threshold
+1. **Research Phase (20-25% of project time) - Structured Responses**
+   - spec-analyst: Requirements research → structured response → requirements_plan.md
+   - spec-story-manager: Story research → structured response → stories_plan.md
+   - spec-architect: Architecture research → structured response → architecture_plan.md
+   - spec-planner: Task planning research → structured response → tasks_plan.md
+   - Quality Gate 1: 95% planning completeness threshold
 
-2. **Development Phase (60-65% of project time)**
-   - spec-developer: Code implementation following story specifications
-   - spec-progress-tracker: Real-time progress monitoring and blocker identification
-   - spec-tester: Comprehensive test suite generation
-   - Quality Gate 2: 80% compliance threshold
+2. **Development Planning Phase (60-65% of project time) - Tech Leader Coordination**
+   - spec-developer: Task complexity research → structured response → development_plan.md
+   - Specialist coordination: Research delegation to domain experts
+   - spec-progress-tracker: Real-time planning progress monitoring
+   - spec-tester: Test planning research → structured response → test_plan.md
+   - Quality Gate 2: 95% development planning completeness threshold
 
-3. **Validation Phase (15-20% of project time)**
-   - spec-reviewer: Code review and best practices validation
-   - spec-validator: Final production readiness assessment
-   - Quality Gate 3: 85% compliance threshold
+3. **Validation & Readiness Phase (15-20% of project time) - Final Assessment**
+   - spec-reviewer: Review planning research → structured response → review_plan.md
+   - spec-validator: Production readiness research → structured response → validation_report.md
+   - Quality Gate 3: 95% implementation readiness threshold
 
 ### Agent Categories
 
@@ -141,7 +142,7 @@ The system follows a three-phase approach with quality gates:
 - spec-story-manager: User story lifecycle management with BMad-Method integration
 - spec-architect: System architecture designer  
 - spec-planner: Task breakdown and checkbox tracking specialist
-- **spec-developer: Tech Leader and implementation coordinator** (Enhanced Role)
+- **spec-developer: Tech Leader and development planning coordinator** (Enhanced Role with Structured Responses)
 - spec-progress-tracker: Real-time progress monitoring and analytics
 - spec-tester: Testing expert
 - spec-reviewer: Code review specialist
@@ -153,11 +154,11 @@ The system follows a three-phase approach with quality gates:
 - senior-backend-architect: Go/TypeScript backend systems
 - ui-ux-master: UI/UX design and implementation
 
-**Odoo Specialists (Coordinated by spec-developer)**
+**Odoo Specialists (Research Coordination by spec-developer)**
 
-- **odoo18-backend-architect**: Odoo 18 enterprise backend development (Models, ORM, Business Logic)
-- **odoo18-frontend-architect**: Odoo 18 OWL frontend development (Components, Widgets, Client-side)
-- **odoo18-view-generator**: Odoo 18 XML view generation (Forms, Lists, Kanban, Search views)
+- **odoo18-backend-architect**: Odoo 18 enterprise backend research and planning (Models, ORM, Business Logic)
+- **odoo18-frontend-architect**: Odoo 18 OWL frontend research and planning (Components, Widgets, Client-side)
+- **odoo18-view-generator**: Odoo 18 XML view research and planning (Forms, Lists, Kanban, Search views)
 
 **Utility Agents**
 
@@ -174,29 +175,51 @@ Each phase includes automated quality gates with specific thresholds:
 - Security vulnerability scanning
 - Production deployment readiness
 
-### Agent Communication Protocol
+### Structured Response Communication Protocol
 
-Agents communicate through structured artifacts:
+Agents communicate through structured response format for 10x token efficiency:
 
-- Each agent produces specific documentation (requirements.md, architecture.md, etc.)
-- Next agent uses previous outputs as input
-- Orchestrator manages the workflow progression
-- Quality gates ensure consistency and standards compliance
+- Each sub-agent returns research in delimited format: `=== DOMAIN RESEARCH RESULTS START/END ===`
+- Main agents parse structured responses and create plan files in .context/agent_plans/
+- Next agents read plan files as input context
+- Orchestrator manages the structured response workflow progression
+- Quality gates ensure consistency and implementation readiness
 
-## Expected Output Structure
+### Key Benefits of Structured Response Architecture
+
+- **10x Token Efficiency**: Eliminates conversation context pollution from file reads
+- **Enhanced Research Quality**: Sub-agents focus purely on analysis and recommendations
+- **Better Implementation Context**: Main agents have complete context for planning
+- **Clear Accountability**: Research vs. planning responsibilities are distinct
+- **Scalable Workflow**: Handle large, complex projects without context limits
+
+## Expected Output Structure with Structured Response System
 
 ```
 project/
+├── .context/                     # Structured response coordination
+│   ├── session_context.md       # Overall project state
+│   ├── planning_context.md      # Planning phase context
+│   ├── development_context.md   # Development phase tracking
+│   └── agent_plans/             # Plan files from structured responses
+│       ├── requirements_plan.md      # From spec-analyst research
+│       ├── stories_plan.md          # From spec-story-manager research
+│       ├── architecture_plan.md     # From spec-architect research
+│       ├── tasks_plan.md           # From spec-planner research
+│       ├── development_plan.md     # From spec-developer research
+│       ├── test_plan.md           # From spec-tester research
+│       ├── review_plan.md         # From spec-reviewer research
+│       └── validation_report.md   # From spec-validator research
 ├── docs/
-│   ├── requirements.md      # Detailed requirements specification
-│   ├── architecture.md      # System architecture design
+│   ├── requirements.md      # Final implementation-ready requirements
+│   ├── architecture.md      # Final implementation-ready architecture
 │   ├── api-spec.md         # API specifications and contracts
 │   └── user-stories.md     # User stories with acceptance criteria
-├── src/
-│   ├── components/         # Reusable components
-│   ├── services/          # Business logic services
-│   ├── utils/             # Utility functions
-│   └── types/             # Type definitions
+├── src/                    # Ready for external implementation
+│   ├── components/         # Based on frontend_plan.md
+│   ├── services/          # Based on backend_plan.md
+│   ├── utils/             # Based on development_plan.md
+│   └── types/             # Based on architecture_plan.md
 ├── tests/
 │   ├── unit/              # Unit tests
 │   ├── integration/       # Integration tests

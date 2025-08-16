@@ -2,7 +2,7 @@
 
 > **Language / 語言**: [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zht.md)
 
-基於 Claude Code Sub-Agents 功能構建的綜合性 AI 驅動開發工作流程系統。該系統透過協調多個專業化 AI 代理，將專案創意轉化為生產就緒的程式碼。
+基於 Claude Code Sub-Agents 功能構建的綜合性 AI 驅動開發工作流程系統，採用**結構化回應架構**。該系統透過協調多個專業化 AI 代理的研究階段，將專案創意轉化為生產就緒的實施計劃，實現 10 倍令牌效率。
 
 ## 目錄
 
